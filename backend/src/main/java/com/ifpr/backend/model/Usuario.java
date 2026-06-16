@@ -10,16 +10,19 @@ import lombok.Data;
 
 @Entity
 @Data
-public class User {
+public class Usuario {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @NotBlank(message = "Nome é Obrigatório")
+    
+    @NotBlank(message = "Nome é obrigatório")
     @Size(min = 3, message = "Insira o nome completo")
-    private String name;
+    private String nome;
+    
     @NotBlank(message = "E-mail é obrigatório")
     private String email;
-    @NotBlank(message = "Senha é obrigatório")
-    private String password;
+    
+    @NotBlank(message = "Senha é obrigatória")
+    private String senha;
 }
