@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.thymeleaf.context.Context;
 
 import com.ifpr.backend.model.Usuario;
 import com.ifpr.backend.repository.UsuarioRepository;
@@ -14,8 +15,18 @@ public class UsuarioService {
     @Autowired
     private UsuarioRepository repository;
 
+    @Autowired
+    private EnvioEmailService emailService;
+
     public Usuario inserir(Usuario usuario) {
-        return repository.save(usuario);
+        Usuario usuarioBanco = repository.save(usuario);
+        //emailService.enviarEmail(usuario.getEmail(),"Sucesso", "Cadastro realizado com sucesso!");
+        Context context = new Context();
+        context.setVariable("nome", usuario.getNome());
+        //context.setVariable("email", usuario.getEmail());
+        
+        emailService.enviaEmailTemplate(usuario.getEmail(), "Sucesso", "novoCadastro", context);
+        return usuarioBanco;
     }
 
     public Usuario atualizar(Usuario usuario) {
@@ -24,7 +35,6 @@ public class UsuarioService {
         usuarioEncontrado.setNome(usuario.getNome());
         usuarioEncontrado.setEmail(usuario.getEmail());
         
-        // Mantive a lógica original do seu amigo: a senha não é atualizada na rota de Patch.
 
         return repository.save(usuarioEncontrado);
     }
