@@ -5,6 +5,8 @@ import RotaProtegida from './components/RotaProtegida';
 import Cadastro from './pages/Cadastro/Cadastro'; 
 import Login from './pages/Login/Login';
 import Dashboard from './pages/Dashboard/Dashboard';
+import RecuperacaoSenha from './pages/RecuperacaoSenha/RecuperacaoSenha';
+import RedefinirSenha from './pages/RedefinirSenha/RedefinirSenha';
 
 function App() {
   return (
@@ -22,6 +24,12 @@ function App() {
 
           {/* Rota da tela de dashboard*/}
           <Route path="/app/dashboard" element={<Dashboard />} /> 
+
+          {/* Rota da tela de recSenha*/}
+          <Route path="/recuperar-senha" element={<RecuperacaoSenha />} /> 
+
+          {/* Rota da tela de redSenha*/}
+          <Route path="/redefinir-senha/:token" element={<RedefinirSenha />} />          
 
         </Routes>
       </BrowserRouter>      
