@@ -3,8 +3,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import RotaProtegida from './components/RotaProtegida';
 import Cadastro from './pages/Cadastro/Cadastro'; 
-
-// import Login from './pages/Login/Login';
+import Login from './pages/Login/Login';
 
 function App() {
   return (
@@ -18,7 +17,7 @@ function App() {
           <Route path="/cadastro" element={<Cadastro />} />
           
           {/* Rota da tela de login (descomente quando criar) */}
-          {/* <Route path="/login" element={<Login />} /> */}
+          <Route path="/login" element={<Login />} /> 
         </Routes>
       </BrowserRouter>      
     </AuthProvider>
