@@ -4,6 +4,7 @@ import { AuthProvider } from './context/AuthContext';
 import RotaProtegida from './components/RotaProtegida';
 import Cadastro from './pages/Cadastro/Cadastro'; 
 import Login from './pages/Login/Login';
+import Dashboard from './pages/Dashboard/Dashboard';
 
 function App() {
   return (
@@ -18,6 +19,10 @@ function App() {
           
           {/* Rota da tela de login (descomente quando criar) */}
           <Route path="/login" element={<Login />} /> 
+
+          {/* Rota da tela de dashboard*/}
+          <Route path="/app/dashboard" element={<Dashboard />} /> 
+
         </Routes>
       </BrowserRouter>      
     </AuthProvider>
