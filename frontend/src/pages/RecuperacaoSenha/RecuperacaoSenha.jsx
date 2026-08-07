@@ -1,9 +1,8 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Card } from "primereact/card";
-import { Button } from "primereact/button";
 import { Message } from "primereact/message";
 import { InputText } from "primereact/inputtext";
+import AuthLayout from '../../components/AuthLayout';
 
 const RecuperacaoSenha = () => {
     const navigate = useNavigate();
@@ -22,30 +21,43 @@ const RecuperacaoSenha = () => {
         setEnviado(true);
     };
 
-    return(
-        <div className="flex justify-content-center align-items-center min-h-screen">
-            <Card title="Recuperar Senha" className="w-full md:w-4 shadow-5">
-                {enviado ? (
-                    <div className="flex flex-column gap-3">
-                        <Message severity="success" text="Se este e-mail estiver cadastrado, você receberá as instruções em breve." />
-                        <Button label="Voltar ao Login" link onClick={() => navigate('/login')} />
+    return (
+        <AuthLayout titulo="Recuperar senha" subtitulo="Enviaremos as instruções para o seu e-mail">
+            {enviado ? (
+                <>
+                    <Message severity="success" text="Se este e-mail estiver cadastrado, você receberá as instruções em breve." />
+                    <div className="auth-link-center">
+                        <button type="button" className="auth-link" onClick={() => navigate('/login')}>
+                            Voltar ao Login
+                        </button>
                     </div>
-                ) : (
-                    <form onSubmit={solicitarRecuperacao} className="flex flex-column gap-3">
-                        <div className="flex flex-column gap-2">
-                            <label htmlFor="email">E-mail</label>
-                            <InputText id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
-                        </div>
+                </>
+            ) : (
+                <form onSubmit={solicitarRecuperacao}>
+                    <div className="auth-field">
+                        <label htmlFor="email">E-mail</label>
+                        <InputText 
+                            id="email" 
+                            type="email" 
+                            value={email} 
+                            onChange={(e) => setEmail(e.target.value)} 
+                            placeholder="seu@email.com"
+                            required 
+                        />
+                    </div>
 
-                        <Button label={carregando ? 'Enviando...' : 'Enviar instruções'} type="submit" disabled={carregando} />
+                    <button type="submit" disabled={carregando} className="auth-btn-primary">
+                        {carregando ? 'Enviando...' : 'Enviar instruções'}
+                    </button>
 
-                        <div className="text-center">
-                            <Button label="Voltar ao Login" link onClick={() => navigate('/login')} type="button" />
-                        </div>
-                    </form>
-                )}
-            </Card>
-        </div>
+                    <div className="auth-link-center">
+                        <button type="button" className="auth-link" onClick={() => navigate('/login')}>
+                            Voltar ao Login
+                        </button>
+                    </div>
+                </form>
+            )}
+        </AuthLayout>
     );
 };
 

@@ -1,0 +1,342 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+.prospera-layout {
+    display: flex;
+    min-height: 100vh;
+    background: #f5f7fa;
+    font-family: 'Inter', system-ui, sans-serif;
+    color: #1f2937;
+}
+
+.prospera-loading {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background: #f5f7fa;
+}
+
+/* Sidebar */
+.prospera-sidebar {
+    width: 260px;
+    background: #ffffff;
+    border-right: 1px solid #e5e7eb;
+    display: flex;
+    flex-direction: column;
+    padding: 24px 16px;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+}
+
+.prospera-logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 8px 12px 24px;
+    border-bottom: 1px solid #f3f4f6;
+    margin-bottom: 20px;
+}
+
+.prospera-logo-icon {
+    width: 40px;
+    height: 40px;
+    background: #16a34a;
+    color: #fff;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 20px;
+}
+
+.prospera-logo-text {
+    font-size: 20px;
+    font-weight: 700;
+    color: #111827;
+    letter-spacing: -0.5px;
+}
+
+.prospera-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    flex: 1;
+}
+
+.prospera-nav-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 14px;
+    border: none;
+    background: transparent;
+    color: #6b7280;
+    font-size: 14px;
+    font-weight: 500;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-align: left;
+    font-family: inherit;
+}
+
+.prospera-nav-item:hover {
+    background: #f3f4f6;
+    color: #111827;
+}
+
+.prospera-nav-item.active {
+    background: #ecfdf5;
+    color: #16a34a;
+    font-weight: 600;
+}
+
+.prospera-nav-item i {
+    font-size: 16px;
+}
+
+.prospera-sidebar-footer {
+    border-top: 1px solid #f3f4f6;
+    padding-top: 16px;
+}
+
+.prospera-nav-item.logout:hover {
+    background: #fef2f2;
+    color: #dc2626;
+}
+
+.prospera-main {
+    flex: 1;
+    padding: 32px 40px;
+    overflow-y: auto;
+}
+
+.prospera-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 32px;
+}
+
+.prospera-title {
+    font-size: 28px;
+    font-weight: 700;
+    margin: 0;
+    color: #111827;
+    letter-spacing: -0.5px;
+}
+
+.prospera-subtitle {
+    margin: 4px 0 0;
+    color: #6b7280;
+    font-size: 14px;
+}
+
+.prospera-user {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: #fff;
+    padding: 8px 16px 8px 8px;
+    border-radius: 12px;
+    border: 1px solid #e5e7eb;
+}
+
+.prospera-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    background: #16a34a;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 16px;
+}
+
+.prospera-user-name {
+    margin: 0;
+    font-weight: 600;
+    font-size: 14px;
+    color: #111827;
+}
+
+.prospera-user-email {
+    margin: 0;
+    font-size: 12px;
+    color: #6b7280;
+}
+
+.prospera-cards {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    margin-bottom: 24px;
+}
+
+.prospera-card {
+    background: #fff;
+    border-radius: 14px;
+    padding: 24px;
+    border: 1px solid #e5e7eb;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    transition: transform 0.2s;
+}
+
+.prospera-card:hover {
+    transform: translateY(-2px);
+}
+
+.prospera-card-icon {
+    width: 52px;
+    height: 52px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+}
+
+.prospera-card-icon.saldo {
+    background: #ecfdf5;
+    color: #16a34a;
+}
+
+.prospera-card-icon.receita {
+    background: #dcfce7;
+    color: #15803d;
+}
+
+.prospera-card-icon.despesa {
+    background: #f3f4f6;
+    color: #6b7280;
+}
+
+.prospera-card-label {
+    margin: 0;
+    color: #6b7280;
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.prospera-card-value {
+    margin: 4px 0 0;
+    font-size: 22px;
+    font-weight: 700;
+    color: #111827;
+    letter-spacing: -0.5px;
+}
+
+.prospera-panel {
+    background: #fff;
+    border-radius: 14px;
+    padding: 24px;
+    border: 1px solid #e5e7eb;
+    margin-bottom: 24px;
+}
+
+.prospera-panel-header {
+    margin-bottom: 20px;
+}
+
+.prospera-panel-header h2 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 700;
+    color: #111827;
+}
+
+.prospera-panel-header p {
+    margin: 4px 0 0;
+    color: #6b7280;
+    font-size: 13px;
+}
+
+.prospera-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.prospera-table thead th {
+    text-align: left;
+    padding: 12px 8px;
+    font-size: 12px;
+    color: #6b7280;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.prospera-table tbody td {
+    padding: 16px 8px;
+    border-bottom: 1px solid #f3f4f6;
+    font-size: 14px;
+}
+
+.prospera-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.prospera-lancamento-desc {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-weight: 500;
+}
+
+.prospera-badge {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+}
+
+.prospera-badge.receita {
+    background: #dcfce7;
+    color: #15803d;
+}
+
+.prospera-badge.despesa {
+    background: #f3f4f6;
+    color: #6b7280;
+}
+
+.prospera-lancamento-data {
+    color: #6b7280;
+}
+
+.prospera-lancamento-valor {
+    text-align: right;
+    font-weight: 700;
+    font-family: 'Inter', monospace;
+}
+
+.prospera-lancamento-valor.receita {
+    color: #16a34a;
+}
+
+.prospera-lancamento-valor.despesa {
+    color: #6b7280;
+}
+
+/* Responsivo */
+@media (max-width: 900px) {
+    .prospera-sidebar {
+        display: none;
+    }
+    .prospera-main {
+        padding: 20px;
+    }
+    .prospera-cards {
+        grid-template-columns: 1fr;
+    }
+}

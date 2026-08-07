@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Card } from 'primereact/card';
 import { InputText } from 'primereact/inputtext';
 import { Password } from 'primereact/password';
 import { Button } from 'primereact/button';
 import { Message } from 'primereact/message';
 import { useAuth } from '../../context/AuthContext';
 import UsuarioService from '../../services/UsuarioService';
+import AuthLayout from '../../components/AuthLayout';
 
 const usuarioService = new UsuarioService();
 
@@ -36,30 +36,49 @@ const Login = () => {
     };
 
     return (
-        <div className="flex justify-content-center align-items-center min-h-screen">
-            <Card title="Entrar" className="w-full md:w-4 shadow-5">
-                <form onSubmit={realizarLogin} className="flex flex-column gap-3">
-                    {erro && <Message severity="error" text={erro} />}
+        <AuthLayout titulo="Bem-vindo de volta" subtitulo="Entre para acessar sua conta">
+            <form onSubmit={realizarLogin}>
+                {erro && <Message severity="error" text={erro} />}
 
-                    <div className="flex flex-column gap-2">
-                        <label htmlFor="email">E-mail</label>
-                        <InputText id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
-                    </div>
+                <div className="auth-field">
+                    <label htmlFor="email">E-mail</label>
+                    <InputText 
+                        id="email" 
+                        type="email" 
+                        value={email} 
+                        onChange={(e) => setEmail(e.target.value)} 
+                        placeholder="seu@email.com"
+                        required 
+                    />
+                </div>
 
-                    <div className="flex flex-column gap-2">
-                        <label htmlFor="senha">Senha</label>
-                        <Password id="senha" value={senha} onChange={(e) => setSenha(e.target.value)} toggleMask required feedback={false} />
-                    </div>
+                <div className="auth-field">
+                    <label htmlFor="senha">Senha</label>
+                    <Password 
+                        id="senha" 
+                        value={senha} 
+                        onChange={(e) => setSenha(e.target.value)} 
+                        placeholder="Digite sua senha"
+                        toggleMask 
+                        feedback={false} 
+                        required 
+                    />
+                </div>
 
-                    <Button label={carregando ? 'Entrando...' : 'Entrar'} type="submit" disabled={carregando} className="mt-2" />
+                <button type="submit" disabled={carregando} className="auth-btn-primary">
+                    {carregando ? 'Entrando...' : 'Entrar'}
+                </button>
 
-                    <div className="text-center mt-2">
-                        <Button label="Esqueceu a senha?" link onClick={() => navigate('/recuperar-senha')} type="button" />
-                        <Button label="Criar conta" link onClick={() => navigate('/cadastro')} type="button" />
-                    </div>
-                </form>
-            </Card>
-        </div>
+                <div className="auth-links">
+                    <button type="button" className="auth-link" onClick={() => navigate('/recuperar-senha')}>
+                        Esqueceu a senha?
+                    </button>
+                    <button type="button" className="auth-link" onClick={() => navigate('/cadastro')}>
+                        Criar conta
+                    </button>
+                </div>
+            </form>
+        </AuthLayout>
     );
 };
 

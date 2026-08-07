@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Card } from 'primereact/card';
 import { Password } from 'primereact/password';
-import { Button } from 'primereact/button';
 import { Message } from 'primereact/message';
+import AuthLayout from '../../components/AuthLayout';
 
 const RedefinirSenha = () => {
     const navigate = useNavigate();
@@ -16,12 +15,14 @@ const RedefinirSenha = () => {
 
     if (!token) {
         return (
-            <div className="flex justify-content-center align-items-center min-h-screen">
-                <Card title="Link Inválido" className="w-full md:w-4 shadow-5">
-                    <Message severity="error" text="Token inválido ou ausente." />
-                    <Button label="Voltar ao Login" link onClick={() => navigate('/login')} className="mt-3" />
-                </Card>
-            </div>
+            <AuthLayout titulo="Link inválido" subtitulo="O token de recuperação não foi encontrado">
+                <Message severity="error" text="Token inválido ou ausente." />
+                <div className="auth-link-center">
+                    <button type="button" className="auth-link" onClick={() => navigate('/login')}>
+                        Voltar ao Login
+                    </button>
+                </div>
+            </AuthLayout>
         );
     }
 
@@ -48,29 +49,45 @@ const RedefinirSenha = () => {
     };
 
     return (
-        <div className="flex justify-content-center align-items-center min-h-screen">
-            <Card title="Redefinir Senha" className="w-full md:w-4 shadow-5">
-                {sucesso ? (
-                    <Message severity="success" text="Senha redefinida com sucesso! Redirecionando..." />
-                ) : (
-                    <form onSubmit={redefinirSenha} className="flex flex-column gap-3">
-                        {erro && <Message severity="error" text={erro} />}
+        <AuthLayout titulo="Redefinir senha" subtitulo="Escolha uma nova senha segura para sua conta">
+            {sucesso ? (
+                <Message severity="success" text="Senha redefinida com sucesso! Redirecionando..." />
+            ) : (
+                <form onSubmit={redefinirSenha}>
+                    {erro && <Message severity="error" text={erro} />}
 
-                        <div className="flex flex-column gap-2">
-                            <label htmlFor="novaSenha">Nova Senha</label>
-                            <Password id="novaSenha" value={novaSenha} onChange={(e) => setNovaSenha(e.target.value)} toggleMask required feedback={false} />
-                        </div>
+                    <div className="auth-field">
+                        <label htmlFor="novaSenha">Nova senha</label>
+                        <Password 
+                            id="novaSenha" 
+                            value={novaSenha} 
+                            onChange={(e) => setNovaSenha(e.target.value)} 
+                            placeholder="Mínimo 6 caracteres"
+                            toggleMask 
+                            feedback 
+                            required 
+                        />
+                    </div>
 
-                        <div className="flex flex-column gap-2">
-                            <label htmlFor="confirmaSenha">Confirmar Senha</label>
-                            <Password id="confirmaSenha" value={confirmaSenha} onChange={(e) => setConfirmaSenha(e.target.value)} toggleMask required feedback={false} />
-                        </div>
+                    <div className="auth-field">
+                        <label htmlFor="confirmaSenha">Confirmar senha</label>
+                        <Password 
+                            id="confirmaSenha" 
+                            value={confirmaSenha} 
+                            onChange={(e) => setConfirmaSenha(e.target.value)} 
+                            placeholder="Digite a senha novamente"
+                            toggleMask 
+                            feedback={false} 
+                            required 
+                        />
+                    </div>
 
-                        <Button label={carregando ? 'Salvando...' : 'Redefinir Senha'} type="submit" disabled={carregando} />
-                    </form>
-                )}
-            </Card>
-        </div>
+                    <button type="submit" disabled={carregando} className="auth-btn-primary">
+                        {carregando ? 'Salvando...' : 'Redefinir senha'}
+                    </button>
+                </form>
+            )}
+        </AuthLayout>
     );
 };
 

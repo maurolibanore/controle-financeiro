@@ -1,12 +1,10 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Card } from 'primereact/card'; // Ajuste o caminho conforme sua biblioteca
 import { InputText } from 'primereact/inputtext';
 import { Password } from 'primereact/password';
-import { Button } from 'primereact/button';
 import { Message } from 'primereact/message';
 import UsuarioService from '../../services/UsuarioService';
-import './Cadastro.css';
+import AuthLayout from '../../components/AuthLayout';
 
 const usuarioService = new UsuarioService();
 
@@ -62,40 +60,43 @@ const Cadastro = () => {
 };
 
     return (
-        <div className="flex justify-content-center align-items-center min-h-screen">
-            <Card title="Criar Conta" className="w-full md:w-4 shadow-5">
-                <form onSubmit={realizarCadastro} className="flex flex-column gap-3">
-                    {erro && <Message severity="error" text={erro} />}
-                    {sucesso && <Message severity="success" text={sucesso} />}
+        <AuthLayout titulo="Criar sua conta" subtitulo="Comece a organizar suas finanças hoje">
+            <form onSubmit={realizarCadastro}>
+                {erro && <Message severity="error" text={erro} />}
+                {sucesso && <Message severity="success" text={sucesso} />}
 
-                    <div className="flex flex-column gap-2">
-                        <label htmlFor="nome">Nome</label>
-                        <InputText id="nome" value={nome} onChange={(e) => setNome(e.target.value)} required />
-                    </div>
+                <div className="auth-field">
+                    <label htmlFor="nome">Nome</label>
+                    <InputText id="nome" value={nome} onChange={(e) => setNome(e.target.value)} required />
+                </div>
 
-                    <div className="flex flex-column gap-2">
-                        <label htmlFor="email">E-mail</label>
-                        <InputText id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
-                    </div>
+                <div className="auth-field">
+                    <label htmlFor="email">E-mail</label>
+                    <InputText id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
+                </div>
 
-                    <div className="flex flex-column gap-2">
-                        <label htmlFor="senha">Senha</label>
-                        <Password id="senha" value={senha} onChange={(e) => setSenha(e.target.value)} toggleMask required feedback={false} />
-                    </div>
+                <div className="auth-field">
+                    <label htmlFor="senha">Senha</label>
+                    <Password id="senha" value={senha} onChange={(e) => setSenha(e.target.value)} toggleMask required feedback />
+                </div>
 
-                    <div className="flex flex-column gap-2">
-                        <label htmlFor="confirmaSenha">Confirmar Senha</label>
-                        <Password id="confirmaSenha" value={confirmaSenha} onChange={(e) => setConfirmaSenha(e.target.value)} toggleMask required feedback={false} />
-                    </div>
+                <div className="auth-field">
+                    <label htmlFor="confirmaSenha">Confirmar Senha</label>
+                    <Password id="confirmaSenha" value={confirmaSenha} onChange={(e) => setConfirmaSenha(e.target.value)} toggleMask required feedback={false} />
+                </div>
 
-                    <Button label={carregando ? 'Cadastrando...' : 'Cadastrar'} type="submit" disabled={carregando} className="mt-2" />
-                    
-                    <div className="text-center mt-2">
-                        <Button label="Já tem conta? Faça Login" link onClick={() => navigate('/login')} type="button" />
-                    </div>
-                </form>
-            </Card>
-        </div>
+                <button type="submit" disabled={carregando} className="auth-btn-primary">
+                    {carregando ? 'Cadastrando...' : 'Cadastrar'}
+                </button>
+
+                <div className="auth-link-center">
+                    Já tem conta?{' '}
+                    <button type="button" className="auth-link" onClick={() => navigate('/login')}>
+                        Faça Login
+                    </button>
+                </div>
+            </form>
+        </AuthLayout>
     );
 };
 

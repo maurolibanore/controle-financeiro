@@ -1,0 +1,20 @@
+.alteracao-senha-container {
+    display: flex;
+    justify-content: center;
+    padding-top: 20px;
+}
+
+.alteracao-senha-card {
+    background: #ffffff;
+    border-radius: 14px;
+    padding: 40px;
+    border: 1px solid #e5e7eb;
+    width: 100%;
+    max-width: 500px;
+}
+
+.alteracao-senha-card form {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
