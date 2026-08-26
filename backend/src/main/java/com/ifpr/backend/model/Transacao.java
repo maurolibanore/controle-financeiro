@@ -1,6 +1,7 @@
 package com.ifpr.backend.model;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import org.hibernate.annotations.CreationTimestamp;
@@ -49,7 +50,7 @@ public class Transacao {
     @Column(nullable = false)
     private TipoTransacao tipo;
 
-    @NotBlank
+    @NotNull
     @DecimalMin(value = "0.01", message = "O valor deve ser maior que zero")
     @Column(nullable = false)
     private BigDecimal valor;
@@ -59,7 +60,7 @@ public class Transacao {
     @NotNull(message = "A data é obrigatória")
     @PastOrPresent(message = "A data não pode ser futura")
     @Column(nullable = false)
-    private LocalDateTime data;
+    private LocalDate data;
 
     @CreationTimestamp
     @Column(updatable = false)
