@@ -12,10 +12,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ifpr.backend.dto.EsqueciSenhaDTO;
 import com.ifpr.backend.dto.LoginRequestDTO;
 import com.ifpr.backend.dto.LoginResponseDTO;
+import com.ifpr.backend.dto.RedefinirSenhaDTO;
 import com.ifpr.backend.exception.NegocioExcecao;
 import com.ifpr.backend.security.JwtService;
+import com.ifpr.backend.service.RecuperacaoSenhaService;
 
 import jakarta.validation.Valid;
 
@@ -47,5 +50,20 @@ public class AutenticacaoController {
         LoginResponseDTO response = new LoginResponseDTO(token, "Bearer", expiration);
 
         return ResponseEntity.ok(response);
+    }
+
+    @Autowired
+    private RecuperacaoSenhaService recuperacaoService;
+
+    @PostMapping("/esqueci-senha")
+    public ResponseEntity<Void> esqueciSenha(@Valid @RequestBody EsqueciSenhaDTO dto){
+        recuperacaoService.solicitarRecuperacao(dto);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/redefinir-senha")
+    public ResponseEntity<Void> redefinirSenha(@Valid @RequestBody RedefinirSenhaDTO dto){
+        recuperacaoService.redefinirSenha(dto);
+        return ResponseEntity.noContent().build();
     }
 }

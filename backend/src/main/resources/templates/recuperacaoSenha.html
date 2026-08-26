@@ -1,0 +1,17 @@
+<html lang="pt-BR">
+    <head>
+        <meta charset="UTF-8">
+        <title>Recuperação de Senha</title>
+    </head>
+    <body>
+        <h1>Recuperação de Senha</h1>
+        <p>Olá <spanth:text="${nome}"></spanth></p>
+        <p>Você solicitou a recuperação da sua senha Prospera.</p>
+         <p>Clique no link abaixo para redefinir sua senha:</p>
+        <p><a th:href="${link}">Redefinir minha senha</a></p>
+        <p>Este link expira em 1 hora.</p>
+        <p>Se você não solicitou essa recuperação, ignore este email.</p>
+        <br>
+        <p>Equipe Prospera</p>
+    </body>
+</html>
