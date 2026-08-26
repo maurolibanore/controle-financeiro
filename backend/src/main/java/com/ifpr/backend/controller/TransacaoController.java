@@ -19,12 +19,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ifpr.backend.dto.ResumoFinanceiroDTO;
 import com.ifpr.backend.dto.TransacaoRequestDTO;
 import com.ifpr.backend.dto.TransacaoResponseDTO;
 import com.ifpr.backend.model.enums.TipoTransacao;
 import com.ifpr.backend.service.TransacaoService;
 
 import jakarta.validation.Valid;
+import tools.jackson.databind.cfg.DateTimeFeature;
 
 @RestController
 @RequestMapping("/carteira/{carteiraId}/transacao")
@@ -73,5 +75,13 @@ public class TransacaoController {
             @PathVariable Long carteiraId,
             @PathVariable Long id) {
         return ResponseEntity.ok(service.buscarPorId(carteiraId, id));
+    }
+
+    @GetMapping("/resumo")
+    public ResponseEntity<ResumoFinanceiroDTO> resumo(
+            @PathVariable Long carteiraId,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dataInicio,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dataFim) {
+        return ResponseEntity.ok(service.buscarResumo(carteiraId, dataInicio, dataFim));
     }
 }

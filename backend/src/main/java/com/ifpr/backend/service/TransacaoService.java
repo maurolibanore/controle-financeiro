@@ -1,12 +1,17 @@
 package com.ifpr.backend.service;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import com.ifpr.backend.dto.ResumoCategoriaDTO;
+import com.ifpr.backend.dto.ResumoFinanceiroDTO;
 import com.ifpr.backend.dto.TransacaoRequestDTO;
 import com.ifpr.backend.dto.TransacaoResponseDTO;
 import com.ifpr.backend.exception.NaoEncontradoExcecao;
@@ -169,5 +174,26 @@ public class TransacaoService {
                 t.getCriadoPor().getNome(),
                 t.getCriadoEm()
         );
+    }
+
+    public ResumoFinanceiroDTO buscarResumo(Long carteiraId, LocalDate dataInicio, LocalDate dataFim) {
+        Usuario usuarioLogado = authUsuarioProvider.getUsuarioAutenticado();
+        Carteira carteira = buscarCarteiraSeMembro(carteiraId, usuarioLogado);
+
+        BigDecimal totalReceitas = repository.somarPorTipo(carteira, TipoTransacao.RECEITA, dataInicio, dataFim);
+        BigDecimal totalDespesas = repository.somarPorTipo(carteira, TipoTransacao.DESPESA, dataInicio, dataFim);
+        BigDecimal saldo = totalReceitas.subtract(totalDespesas);
+
+        List<ResumoCategoriaDTO> porCategoria = repository.somarPorCategoria(carteira, dataInicio, dataFim)
+                .stream()
+                .map(row -> new ResumoCategoriaDTO(
+                        (String) row[0],
+                        (String) row[1],
+                        (TipoTransacao) row[2],
+                        (BigDecimal) row[3]
+                ))
+                .collect(Collectors.toList());
+
+        return new ResumoFinanceiroDTO(totalReceitas, totalDespesas, saldo, porCategoria);
     }
 }
