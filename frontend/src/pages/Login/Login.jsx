@@ -2,12 +2,13 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { InputText } from 'primereact/inputtext';
 import { Password } from 'primereact/password';
-import { Button } from 'primereact/button';
 import { Message } from 'primereact/message';
 import { useAuth } from '../../context/AuthContext';
+import AutenticacaoService from '../../services/AutenticacaoService';
 import UsuarioService from '../../services/UsuarioService';
 import AuthLayout from '../../components/AuthLayout';
 
+const autenticacaoService = new AutenticacaoService();
 const usuarioService = new UsuarioService();
 
 const Login = () => {
@@ -24,12 +25,24 @@ const Login = () => {
         setCarregando(true);
 
         try {
-            const resposta = await usuarioService.login({ email, senha });
-            login(resposta.data);
+            // faz login e recebe o token
+            const respostaLogin = await autenticacaoService.login({ email, senha });
+            const token = respostaLogin.data.token;
+
+            // salva o token no localStorage para o axios usar automaticamente
+            localStorage.setItem('usuario', JSON.stringify({ token }));
+
+            // busca os dados do usuario logado
+            const respostaPerfil = await usuarioService.buscarMeuPerfil();
+            const dadosUsuario = { ...respostaPerfil.data, token };
+
+            // att o AuthContext com os dados 
+            login(dadosUsuario);
             navigate('/app/dashboard');
         } catch (erroLogin) {
             const mensagem = erroLogin?.response?.data?.mensagem || 'E-mail ou senha inválidos.';
             setErro(mensagem);
+            localStorage.removeItem('usuario');
         } finally {
             setCarregando(false);
         }

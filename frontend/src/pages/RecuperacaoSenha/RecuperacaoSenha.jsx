@@ -3,6 +3,9 @@ import { useNavigate } from "react-router-dom";
 import { Message } from "primereact/message";
 import { InputText } from "primereact/inputtext";
 import AuthLayout from '../../components/AuthLayout';
+import AutenticacaoService from '../../services/AutenticacaoService';
+
+const autenticacaoService = new AutenticacaoService();
 
 const RecuperacaoSenha = () => {
     const navigate = useNavigate();
@@ -14,11 +17,15 @@ const RecuperacaoSenha = () => {
         event.preventDefault();
         setCarregando(true);
 
-        //simulacao
-        await new Promise((resolve) => setTimeout(resolve,1000));
-
-        setCarregando(false);
-        setEnviado(true);
+        try {
+            await autenticacaoService.esqueciSenha({ email });
+        } catch (erro) {
+            // n mostra se o email existe — sempre a mesma mensagem
+            console.error(erro);
+        } finally {
+            setCarregando(false);
+            setEnviado(true);
+        }
     };
 
     return (

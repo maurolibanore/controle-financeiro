@@ -3,6 +3,9 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { Password } from 'primereact/password';
 import { Message } from 'primereact/message';
 import AuthLayout from '../../components/AuthLayout';
+import AutenticacaoService from '../../services/AutenticacaoService';
+
+const autenticacaoService = new AutenticacaoService();
 
 const RedefinirSenha = () => {
     const navigate = useNavigate();
@@ -41,11 +44,17 @@ const RedefinirSenha = () => {
         }
 
         setCarregando(true);
-        await new Promise((resolve) => setTimeout(resolve, 1000));
-        setCarregando(false);
-        setSucesso(true);
 
-        setTimeout(() => navigate('/login'), 2000);
+        try {
+            await autenticacaoService.redefinirSenha({ token, novaSenha });
+            setSucesso(true);
+            setTimeout(() => navigate('/login'), 2000);
+        } catch (erroRedefinir) {
+            const mensagem = erroRedefinir?.response?.data?.mensagem || 'Erro ao redefinir senha.';
+            setErro(mensagem);
+        } finally {
+            setCarregando(false);
+        }
     };
 
     return (

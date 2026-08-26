@@ -3,7 +3,10 @@ import { useNavigate } from 'react-router-dom';
 import { Password } from 'primereact/password';
 import { Message } from 'primereact/message';
 import { useAuth } from '../../context/AuthContext';
+import UsuarioService from '../../services/UsuarioService';
 import './AlteracaoSenha.css';
+
+const usuarioService = new UsuarioService();
 
 const AlteracaoSenha = () => {
     const navigate = useNavigate();
@@ -25,11 +28,6 @@ const AlteracaoSenha = () => {
         setErro('');
         setSucesso('');
 
-        if (senhaAtual !== '123456') {
-            setErro('Senha atual incorreta.');
-            return;
-        }
-
         if (novaSenha.length < 6) {
             setErro('A nova senha deve ter no mínimo 6 caracteres.');
             return;
@@ -41,12 +39,19 @@ const AlteracaoSenha = () => {
         }
 
         setCarregando(true);
-        await new Promise((resolve) => setTimeout(resolve, 1000));
-        setCarregando(false);
-        setSucesso('Senha alterada com sucesso!');
-        setSenhaAtual('');
-        setNovaSenha('');
-        setConfirmaSenha('');
+
+        try {
+            await usuarioService.alterarMinhaSenha({ senhaAtual, novaSenha });
+            setSucesso('Senha alterada com sucesso!');
+            setSenhaAtual('');
+            setNovaSenha('');
+            setConfirmaSenha('');
+        } catch (erroAlterar) {
+            const mensagem = erroAlterar?.response?.data?.mensagem || 'Erro ao alterar senha.';
+            setErro(mensagem);
+        } finally {
+            setCarregando(false);
+        }
     };
 
     return (
