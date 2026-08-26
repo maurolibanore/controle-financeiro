@@ -3,44 +3,55 @@ import { useNavigate } from 'react-router-dom';
 import { ProgressSpinner } from 'primereact/progressspinner';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { useAuth } from '../../context/AuthContext';
+import CarteiraService from '../../services/CarteiraService';
+import TransacaoService from '../../services/TransacaoService';
 import './Dashboard.css';
 
-const dadosMock = {
-    resumo: {
-        saldo: 2450.00,
-        receitas: 5000.00,
-        despesas: 2550.00
-    },
-    grafico: [
-        { mes: 'Mar', receitas: 4200, despesas: 3100 },
-        { mes: 'Abr', receitas: 3800, despesas: 2900 },
-        { mes: 'Mai', receitas: 5100, despesas: 3400 },
-        { mes: 'Jun', receitas: 4700, despesas: 2800 },
-        { mes: 'Jul', receitas: 5300, despesas: 3200 },
-        { mes: 'Ago', receitas: 5000, despesas: 2550 },
-    ],
-    lancamentos: [
-        { id: 1, descricao: 'Salário', valor: 4000.00, data: '01/08/2026', tipo: 'receita' },
-        { id: 2, descricao: 'Freelance', valor: 1000.00, data: '03/08/2026', tipo: 'receita' },
-        { id: 3, descricao: 'Aluguel', valor: 900.00, data: '05/08/2026', tipo: 'despesa' },
-        { id: 4, descricao: 'Mercado', valor: 450.00, data: '06/08/2026', tipo: 'despesa' },
-        { id: 5, descricao: 'Internet', valor: 100.00, data: '07/08/2026', tipo: 'despesa' },
-        { id: 6, descricao: 'Streaming', valor: 50.00, data: '08/08/2026', tipo: 'despesa' },
-    ]
-};
+const carteiraService = new CarteiraService();
+const transacaoService = new TransacaoService();
 
 const Dashboard = () => {
     const { usuario, logout } = useAuth();
     const navigate = useNavigate();
     const [carregando, setCarregando] = useState(true);
-    const [dados, setDados] = useState(null);
+    const [erro, setErro] = useState('');
+    const [carteira, setCarteira] = useState(null);
+    const [resumo, setResumo] = useState(null);
+    const [transacoes, setTransacoes] = useState([]);
 
     useEffect(() => {
         const carregarDados = async () => {
-            await new Promise((resolve) => setTimeout(resolve, 1500));
-            setDados(dadosMock);
-            setCarregando(false);
+            try {
+                const respostaCarteiras = await carteiraService.buscarTodos();
+                const carteiras = respostaCarteiras.data;
+
+                if (carteiras.length === 0) {
+                    setErro('Você não possui nenhuma carteira.');
+                    setCarregando(false);
+                    return;
+                }
+
+                const carteiraAtual = carteiras[0];
+                setCarteira(carteiraAtual);
+
+                const respostaResumo = await transacaoService.buscarResumo(carteiraAtual.id);
+                setResumo(respostaResumo.data);
+
+                const respostaTransacoes = await transacaoService.buscarTransacoes(carteiraAtual.id, {
+                    page: 0,
+                    size: 6,
+                    sort: 'data,desc'
+                });
+                setTransacoes(respostaTransacoes.data.content);
+
+            } catch (erroCarregar) {
+                console.error(erroCarregar);
+                setErro('Erro ao carregar dados do dashboard.');
+            } finally {
+                setCarregando(false);
+            }
         };
+
         carregarDados();
     }, []);
 
@@ -48,6 +59,13 @@ const Dashboard = () => {
         logout();
         navigate('/login');
     };
+
+    // prepara dados do graf a partir do resumo por categoria
+    const dadosGrafico = resumo?.porCategoria?.map(cat => ({
+        nome: cat.categoriaNome,
+        receitas: cat.tipo === 'RECEITA' ? Number(cat.total) : 0,
+        despesas: cat.tipo === 'DESPESA' ? Number(cat.total) : 0
+    })) || [];
 
     if (carregando) {
         return (
@@ -71,7 +89,7 @@ const Dashboard = () => {
                         <i className="pi pi-home"></i>
                         <span>Dashboard</span>
                     </button>
-                    <button className="prospera-nav-item">
+                    <button className="prospera-nav-item" onClick={() => navigate('/app/transacoes')}>
                         <i className="pi pi-wallet"></i>
                         <span>Transações</span>
                     </button>
@@ -98,7 +116,9 @@ const Dashboard = () => {
                 <header className="prospera-header">
                     <div>
                         <h1 className="prospera-title">Dashboard</h1>
-                        <p className="prospera-subtitle">Visão geral das suas finanças</p>
+                        <p className="prospera-subtitle">
+                            {carteira ? `Carteira: ${carteira.nome}` : 'Visão geral das suas finanças'}
+                        </p>
                     </div>
                     <div className="prospera-user">
                         <div className="prospera-avatar">
@@ -111,89 +131,114 @@ const Dashboard = () => {
                     </div>
                 </header>
 
-                <section className="prospera-cards">
-                    <div className="prospera-card">
-                        <div className="prospera-card-icon saldo">
-                            <i className="pi pi-dollar"></i>
-                        </div>
-                        <div>
-                            <p className="prospera-card-label">Saldo Atual</p>
-                            <p className="prospera-card-value">R$ {dados.resumo.saldo.toFixed(2)}</p>
-                        </div>
+                {erro && (
+                    <div style={{ background: '#fef2f2', color: '#dc2626', padding: 16, borderRadius: 10, marginBottom: 24 }}>
+                        {erro}
                     </div>
+                )}
 
-                    <div className="prospera-card">
-                        <div className="prospera-card-icon receita">
-                            <i className="pi pi-arrow-up"></i>
-                        </div>
-                        <div>
-                            <p className="prospera-card-label">Receitas do Mês</p>
-                            <p className="prospera-card-value">R$ {dados.resumo.receitas.toFixed(2)}</p>
-                        </div>
-                    </div>
+                {resumo && (
+                    <>
+                        <section className="prospera-cards">
+                            <div className="prospera-card">
+                                <div className="prospera-card-icon saldo">
+                                    <i className="pi pi-dollar"></i>
+                                </div>
+                                <div>
+                                    <p className="prospera-card-label">Saldo Atual</p>
+                                    <p className="prospera-card-value">R$ {Number(resumo.saldo).toFixed(2)}</p>
+                                </div>
+                            </div>
 
-                    <div className="prospera-card">
-                        <div className="prospera-card-icon despesa">
-                            <i className="pi pi-arrow-down"></i>
-                        </div>
-                        <div>
-                            <p className="prospera-card-label">Despesas do Mês</p>
-                            <p className="prospera-card-value">R$ {dados.resumo.despesas.toFixed(2)}</p>
-                        </div>
-                    </div>
-                </section>
+                            <div className="prospera-card">
+                                <div className="prospera-card-icon receita">
+                                    <i className="pi pi-arrow-up"></i>
+                                </div>
+                                <div>
+                                    <p className="prospera-card-label">Receitas</p>
+                                    <p className="prospera-card-value">R$ {Number(resumo.totalReceitas).toFixed(2)}</p>
+                                </div>
+                            </div>
 
-                <section className="prospera-panel">
-                    <div className="prospera-panel-header">
-                        <h2>Receitas x Despesas</h2>
-                        <p>Últimos 6 meses</p>
-                    </div>
-                    <ResponsiveContainer width="100%" height={320}>
-                        <BarChart data={dados.grafico}>
-                            <CartesianGrid strokeDasharray="3 3" stroke="#e8ecef" />
-                            <XAxis dataKey="mes" stroke="#6b7280" />
-                            <YAxis stroke="#6b7280" />
-                            <Tooltip formatter={(value) => `R$ ${value.toFixed(2)}`} />
-                            <Legend />
-                            <Bar dataKey="receitas" name="Receitas" fill="#16a34a" radius={[8, 8, 0, 0]} />
-                            <Bar dataKey="despesas" name="Despesas" fill="#94a3b8" radius={[8, 8, 0, 0]} />
-                        </BarChart>
-                    </ResponsiveContainer>
-                </section>
+                            <div className="prospera-card">
+                                <div className="prospera-card-icon despesa">
+                                    <i className="pi pi-arrow-down"></i>
+                                </div>
+                                <div>
+                                    <p className="prospera-card-label">Despesas</p>
+                                    <p className="prospera-card-value">R$ {Number(resumo.totalDespesas).toFixed(2)}</p>
+                                </div>
+                            </div>
+                        </section>
+
+                        {dadosGrafico.length > 0 && (
+                            <section className="prospera-panel">
+                                <div className="prospera-panel-header">
+                                    <h2>Receitas x Despesas por Categoria</h2>
+                                    <p>Visão consolidada por categoria</p>
+                                </div>
+                                <ResponsiveContainer width="100%" height={320}>
+                                    <BarChart data={dadosGrafico}>
+                                        <CartesianGrid strokeDasharray="3 3" stroke="#e8ecef" />
+                                        <XAxis dataKey="nome" stroke="#6b7280" />
+                                        <YAxis stroke="#6b7280" />
+                                        <Tooltip formatter={(value) => `R$ ${Number(value).toFixed(2)}`} />
+                                        <Legend />
+                                        <Bar dataKey="receitas" name="Receitas" fill="#16a34a" radius={[8, 8, 0, 0]} />
+                                        <Bar dataKey="despesas" name="Despesas" fill="#94a3b8" radius={[8, 8, 0, 0]} />
+                                    </BarChart>
+                                </ResponsiveContainer>
+                            </section>
+                        )}
+                    </>
+                )}
 
                 <section className="prospera-panel">
                     <div className="prospera-panel-header">
                         <h2>Lançamentos Recentes</h2>
                         <p>Últimas movimentações</p>
                     </div>
-                    <table className="prospera-table">
-                        <thead>
-                            <tr>
-                                <th>Descrição</th>
-                                <th>Data</th>
-                                <th style={{ textAlign: 'right' }}>Valor</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {dados.lancamentos.map((item) => (
-                                <tr key={item.id}>
-                                    <td>
-                                        <div className="prospera-lancamento-desc">
-                                            <span className={`prospera-badge ${item.tipo}`}>
-                                                <i className={`pi ${item.tipo === 'receita' ? 'pi-arrow-up' : 'pi-arrow-down'}`}></i>
-                                            </span>
-                                            {item.descricao}
-                                        </div>
-                                    </td>
-                                    <td className="prospera-lancamento-data">{item.data}</td>
-                                    <td className={`prospera-lancamento-valor ${item.tipo}`}>
-                                        {item.tipo === 'despesa' ? '- ' : '+ '}
-                                        R$ {item.valor.toFixed(2)}
-                                    </td>
+                    {transacoes.length === 0 ? (
+                        <p style={{ textAlign: 'center', color: '#6b7280', padding: 32 }}>
+                            Nenhuma transação cadastrada ainda.
+                        </p>
+                    ) : (
+                        <table className="prospera-table">
+                            <thead>
+                                <tr>
+                                    <th>Descrição</th>
+                                    <th>Categoria</th>
+                                    <th>Data</th>
+                                    <th style={{ textAlign: 'right' }}>Valor</th>
                                 </tr>
-                            ))}
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody>
+                                {transacoes.map((item) => {
+                                    const tipo = item.tipo.toLowerCase();
+                                    return (
+                                        <tr key={item.id}>
+                                            <td>
+                                                <div className="prospera-lancamento-desc">
+                                                    <span className={`prospera-badge ${tipo}`}>
+                                                        <i className={`pi ${tipo === 'receita' ? 'pi-arrow-up' : 'pi-arrow-down'}`}></i>
+                                                    </span>
+                                                    {item.descricao || '(sem descrição)'}
+                                                </div>
+                                            </td>
+                                            <td className="prospera-lancamento-data">{item.categoriaNome || '-'}</td>
+                                            <td className="prospera-lancamento-data">
+                                                {new Date(item.data).toLocaleDateString('pt-BR')}
+                                            </td>
+                                            <td className={`prospera-lancamento-valor ${tipo}`}>
+                                                {tipo === 'despesa' ? '- ' : '+ '}
+                                                R$ {Number(item.valor).toFixed(2)}
+                                            </td>
+                                        </tr>
+                                    );
+                                })}
+                            </tbody>
+                        </table>
+                    )}
                 </section>
 
             </main>
