@@ -16,7 +16,12 @@ import com.ifpr.backend.dto.UsuarioResponseDTO;
 import com.ifpr.backend.exception.NegocioExcecao;
 import com.ifpr.backend.security.AuthUsuarioProvider;
 import com.ifpr.backend.exception.NaoEncontradoExcecao;
+import com.ifpr.backend.model.Carteira;
+import com.ifpr.backend.model.CarteiraMembro;
 import com.ifpr.backend.model.Usuario;
+import com.ifpr.backend.model.enums.PapelCarteira;
+import com.ifpr.backend.repository.CarteiraMembroRepository;
+import com.ifpr.backend.repository.CarteiraRepository;
 import com.ifpr.backend.repository.UsuarioRepository;
 
 @Service
@@ -34,9 +39,29 @@ public class UsuarioService implements UserDetailsService {
     @Autowired
     private AuthUsuarioProvider authUsuarioProvider;
 
+    @Autowired
+    private CarteiraRepository carteiraRepository;
+
+    @Autowired
+    private CarteiraMembroRepository carteiraMembroRepository;
+
     public Usuario inserir(Usuario usuario) {
         usuario.setSenha(passwordEncoder.encode(usuario.getSenha()));
         Usuario usuarioBanco = repository.save(usuario);
+
+        // Cria carteira padrão automaticamente
+        Carteira carteira = new Carteira();
+        carteira.setNome("Pessoal");
+        carteira.setDescricao("Minha carteira pessoal");
+        carteira.setDono(usuarioBanco);
+        Carteira carteiraSalva = carteiraRepository.save(carteira);
+
+        CarteiraMembro membro = new CarteiraMembro();
+        membro.setCarteira(carteiraSalva);
+        membro.setUsuario(usuarioBanco);
+        membro.setPapel(PapelCarteira.DONO);
+        carteiraMembroRepository.save(membro);
+
         //emailService.enviarEmail(usuario.getEmail(),"Sucesso", "Cadastro realizado com sucesso!");
         Context context = new Context();
         context.setVariable("nome", usuario.getNome());
