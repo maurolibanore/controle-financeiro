@@ -10,6 +10,11 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.context.Context;
 
+import com.ifpr.backend.dto.AlterarSenhaDTO;
+import com.ifpr.backend.dto.AtualizarPerfilDTO;
+import com.ifpr.backend.dto.UsuarioResponseDTO;
+import com.ifpr.backend.exception.NegocioExcecao;
+import com.ifpr.backend.security.AuthUsuarioProvider;
 import com.ifpr.backend.exception.NaoEncontradoExcecao;
 import com.ifpr.backend.model.Usuario;
 import com.ifpr.backend.repository.UsuarioRepository;
@@ -25,6 +30,9 @@ public class UsuarioService implements UserDetailsService {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private AuthUsuarioProvider authUsuarioProvider;
 
     public Usuario inserir(Usuario usuario) {
         usuario.setSenha(passwordEncoder.encode(usuario.getSenha()));
@@ -65,5 +73,39 @@ public class UsuarioService implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         return repository.findByEmail(username)
                 .orElseThrow(() -> new UsernameNotFoundException("Usuário não encontrado: " + username));
+    }
+
+    public UsuarioResponseDTO buscarPerfilLogado() {
+        Usuario usuario = authUsuarioProvider.getUsuarioAutenticado();
+        return new UsuarioResponseDTO(
+                usuario.getId(),
+                usuario.getNome(),
+                usuario.getEmail(),
+                usuario.getCriadoEm()
+        );
+    }
+
+    public UsuarioResponseDTO atualizarPerfilLogado(AtualizarPerfilDTO dto) {
+        Usuario usuario = authUsuarioProvider.getUsuarioAutenticado();
+        usuario.setNome(dto.getNome());
+        Usuario atualizado = repository.save(usuario);
+
+        return new UsuarioResponseDTO(
+                atualizado.getId(),
+                atualizado.getNome(),
+                atualizado.getEmail(),
+                atualizado.getCriadoEm()
+        );
+    }
+
+    public void alterarSenha(AlterarSenhaDTO dto) {
+        Usuario usuario = authUsuarioProvider.getUsuarioAutenticado();
+
+        if (!passwordEncoder.matches(dto.getSenhaAtual(), usuario.getSenha())) {
+            throw new NegocioExcecao("Senha atual incorreta");
+        }
+
+        usuario.setSenha(passwordEncoder.encode(dto.getNovaSenha()));
+        repository.save(usuario);
     }
 }
