@@ -217,7 +217,7 @@ const Transacoes = () => {
                         <i className="pi pi-users"></i>
                         <span>Compartilhamento</span>
                     </button>
-                    <button className="prospera-nav-item" onClick={() => navigate('/app/perfil/senha')}>
+                    <button className="prospera-nav-item" onClick={() => navigate('/app/perfil')}>
                         <i className="pi pi-user"></i>
                         <span>Perfil</span>
                     </button>

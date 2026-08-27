@@ -9,6 +9,7 @@ import RecuperacaoSenha from './pages/RecuperacaoSenha/RecuperacaoSenha';
 import RedefinirSenha from './pages/RedefinirSenha/RedefinirSenha';
 import AlteracaoSenha from './pages/AlteracaoSenha/AlteracaoSenha';
 import Transacoes from './pages/Transacoes/Transacoes';
+import Perfil from './pages/Perfil/Perfil';
 
 function App() {
   return (
@@ -47,6 +48,12 @@ function App() {
           <Route path="/app/transacoes" element={
               <RotaProtegida>
                   <Transacoes />
+              </RotaProtegida>
+          } />
+
+          <Route path="/app/perfil" element={
+              <RotaProtegida>
+                  <Perfil />
               </RotaProtegida>
           } />
 
