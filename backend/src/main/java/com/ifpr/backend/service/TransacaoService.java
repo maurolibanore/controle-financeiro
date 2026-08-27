@@ -184,12 +184,12 @@ public class TransacaoService {
         BigDecimal totalDespesas = repository.somarPorTipo(carteira, TipoTransacao.DESPESA, dataInicio, dataFim);
         BigDecimal saldo = totalReceitas.subtract(totalDespesas);
 
-        List<ResumoCategoriaDTO> porCategoria = repository.somarPorCategoria(carteira, dataInicio, dataFim)
+        List<ResumoCategoriaDTO> porCategoria = repository.somarPorCategoria(carteira.getId(), dataInicio, dataFim)
                 .stream()
                 .map(row -> new ResumoCategoriaDTO(
                         (String) row[0],
                         (String) row[1],
-                        (TipoTransacao) row[2],
+                        TipoTransacao.valueOf((String) row[2]),
                         (BigDecimal) row[3]
                 ))
                 .collect(Collectors.toList());

@@ -61,11 +61,24 @@ const Dashboard = () => {
     };
 
     // prepara dados do graf a partir do resumo por categoria
-    const dadosGrafico = resumo?.porCategoria?.map(cat => ({
-        nome: cat.categoriaNome,
-        receitas: cat.tipo === 'RECEITA' ? Number(cat.total) : 0,
-        despesas: cat.tipo === 'DESPESA' ? Number(cat.total) : 0
-    })) || [];
+    const dadosGrafico = (() => {
+        if (!resumo?.porCategoria) return [];
+        
+        const agrupado = {};
+        resumo.porCategoria.forEach(cat => {
+            const nome = cat.categoriaNome || 'Sem categoria';
+            if (!agrupado[nome]) {
+                agrupado[nome] = { nome, receitas: 0, despesas: 0 };
+            }
+            if (cat.tipo === 'RECEITA') {
+                agrupado[nome].receitas += Number(cat.total);
+            } else {
+                agrupado[nome].despesas += Number(cat.total);
+            }
+        });
+        
+        return Object.values(agrupado);
+    })();
 
     if (carregando) {
         return (

@@ -40,13 +40,20 @@ public interface TransacaoRepository extends JpaRepository<Transacao, Long> {
             @Param("dataInicio") LocalDate dataInicio,
             @Param("dataFim") LocalDate dataFim);
 
-    @Query("SELECT t.categoria.nome, t.categoria.cor, t.tipo, SUM(t.valor) FROM Transacao t " +
-           "WHERE t.carteira = :carteira AND t.categoria IS NOT NULL " +
-           "AND (:dataInicio IS NULL OR t.data >= :dataInicio) " +
-           "AND (:dataFim IS NULL OR t.data <= :dataFim) " +
-           "GROUP BY t.categoria.id, t.categoria.nome, t.categoria.cor, t.tipo")
-    List<Object[]> somarPorCategoria( // retorna uma lista com nome, cor, tipo e total agrupado por cat
-            @Param("carteira") Carteira carteira,
-            @Param("dataInicio") LocalDate dataInicio,
-            @Param("dataFim") LocalDate dataFim);
+    @Query(value = "SELECT " +
+              "COALESCE(c.nome, 'Sem categoria') as nome, " +
+              "COALESCE(c.cor, '#94a3b8') as cor, " +
+              "t.tipo as tipo, " +
+              "SUM(t.valor) as total " +
+              "FROM transacao t " +
+              "LEFT JOIN categoria c ON c.id = t.categoria_id " +
+              "WHERE t.carteira_id = :carteiraId " +
+              "AND (:dataInicio IS NULL OR t.data >= :dataInicio) " +
+              "AND (:dataFim IS NULL OR t.data <= :dataFim) " +
+              "GROUP BY COALESCE(c.nome, 'Sem categoria'), COALESCE(c.cor, '#94a3b8'), t.tipo",
+              nativeQuery = true)
+       List<Object[]> somarPorCategoria(
+              @Param("carteiraId") Long carteiraId,
+              @Param("dataInicio") LocalDate dataInicio,
+              @Param("dataFim") LocalDate dataFim);
 }
