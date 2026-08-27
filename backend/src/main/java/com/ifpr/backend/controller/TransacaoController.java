@@ -26,7 +26,6 @@ import com.ifpr.backend.model.enums.TipoTransacao;
 import com.ifpr.backend.service.TransacaoService;
 
 import jakarta.validation.Valid;
-import tools.jackson.databind.cfg.DateTimeFeature;
 
 @RestController
 @RequestMapping("/carteira/{carteiraId}/transacao")
