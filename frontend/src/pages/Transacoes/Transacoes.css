@@ -1,0 +1,37 @@
+.transacoes-toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    gap: 12px;
+}
+
+.prospera-btn-primary {
+    background: #16a34a !important;
+    border-color: #16a34a !important;
+}
+
+.prospera-btn-primary:hover {
+    background: #15803d !important;
+    border-color: #15803d !important;
+}
+
+.prospera-loading-inline {
+    display: flex;
+    justify-content: center;
+    padding: 40px;
+}
+
+.transacao-form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding-top: 8px;
+}
+
+.transacao-form .p-inputtext,
+.transacao-form .p-dropdown,
+.transacao-form .p-inputnumber,
+.transacao-form .p-calendar {
+    width: 100%;
+}
