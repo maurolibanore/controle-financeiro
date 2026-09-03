@@ -1,6 +1,6 @@
 # Prospera — Controle Financeiro Pessoal e Compartilhado
 
-Aplicação web full-stack de controle financeiro pessoal e compartilhado. Permite ao usuário cadastrar receitas e despesas, organizar por categorias, visualizar resumos financeiros e compartilhar carteiras com outros usuários.
+Aplicação web full-stack de controle financeiro pessoal e compartilhado. Permite ao usuário cadastrar receitas e despesas, organizar por categorias, visualizar resumos financeiros, gerenciar múltiplas carteiras e compartilhar carteiras com outros usuários definindo papéis de acesso.
 
 ## Tecnologias
 
@@ -21,6 +21,7 @@ Aplicação web full-stack de controle financeiro pessoal e compartilhado. Permi
 - PrimeReact + PrimeIcons
 - Recharts (gráficos)
 - Axios
+- Context API
 
 ## Estrutura do projeto
 
@@ -74,7 +75,7 @@ Frontend disponível em `http://localhost:5173`.
 ## Funcionalidades
 
 ### Autenticação
-- Cadastro de usuário (com criação automática de carteira padrão)
+- Cadastro de usuário (com criação automática de carteira "Pessoal")
 - Login com JWT (token expira em 24h)
 - Recuperação de senha por email
 - Redefinição de senha via token
@@ -83,23 +84,24 @@ Frontend disponível em `http://localhost:5173`.
 
 ### Gestão financeira
 - Dashboard com saldo, receitas, despesas e gráfico por categoria
-- CRUD de transações (receitas e despesas)
-- Filtros por tipo, categoria e período
-- Paginação de transações
-- CRUD de categorias
-- CRUD de carteiras com compartilhamento
+- CRUD completo de transações (receitas e despesas)
+- Filtros por tipo e paginação
+- CRUD completo de categorias com cor personalizada
+- CRUD completo de carteiras
+- Seleção de carteira ativa
 
-### Compartilhamento (backend pronto)
+### Compartilhamento
 - Adicionar membros à carteira por email
 - 3 papéis: DONO, EDITOR, VISUALIZADOR
-- DONO gerencia tudo
+- DONO gerencia tudo (transações, membros, edita/exclui carteira)
 - EDITOR cria/edita/exclui transações
 - VISUALIZADOR só visualiza
+- Alterar papel de membros
+- Remover membros
 
 ### Perfil
 - Visualizar e editar dados pessoais
-- Data de cadastro
-- Acesso rápido para alterar senha
+- Alterar senha
 
 ## Segurança
 
@@ -158,6 +160,8 @@ Frontend disponível em `http://localhost:5173`.
 **Autorização granular:** carteira compartilhada com papéis definidos por enum. Validações no service garantem que apenas quem tem permissão pode executar cada ação.
 
 **Persistência de sessão:** usuário logado salvo no localStorage. Ao recarregar a página, o AuthContext restaura o estado automaticamente.
+
+**Carteira ativa:** o CarteiraContext guarda qual carteira o usuário está usando no momento. Ao trocar, o dashboard e transações atualizam automaticamente. Ao fazer logout, é resetada.
 
 **Carteira padrão automática:** ao cadastrar, o usuário já recebe uma carteira "Pessoal" para começar a usar sem configuração extra.
 
