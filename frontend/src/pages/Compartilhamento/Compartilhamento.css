@@ -1,0 +1,102 @@
+.compart-toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 24px;
+    gap: 16px;
+}
+
+.compart-label {
+    display: block;
+    font-size: 13px;
+    color: #374151;
+    margin-bottom: 6px;
+    font-weight: 500;
+}
+
+.compart-aviso {
+    background: #fef3c7;
+    color: #92400e;
+    padding: 12px 16px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.membros-lista {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.membro-card {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 16px;
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+}
+
+.membro-avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    background: #16a34a;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 18px;
+    flex-shrink: 0;
+}
+
+.membro-info {
+    flex: 1;
+}
+
+.membro-info h3 {
+    margin: 0 0 4px;
+    font-size: 15px;
+    color: #111827;
+}
+
+.membro-info p {
+    margin: 0 0 8px;
+    color: #6b7280;
+    font-size: 13px;
+}
+
+.membro-papel {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 600;
+}
+
+.membro-papel.dono {
+    background: #dbeafe;
+    color: #1e40af;
+}
+
+.membro-papel.editor {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.membro-papel.visualizador {
+    background: #f3f4f6;
+    color: #4b5563;
+}
+
+.membro-acoes {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}

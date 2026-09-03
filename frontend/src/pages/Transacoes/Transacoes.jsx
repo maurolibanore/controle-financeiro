@@ -10,22 +10,21 @@ import { Dialog } from 'primereact/dialog';
 import { Toast } from 'primereact/toast';
 import { ConfirmDialog, confirmDialog } from 'primereact/confirmdialog';
 import { useAuth } from '../../context/AuthContext';
-import CarteiraService from '../../services/CarteiraService';
+import { useCarteira } from '../../context/CarteiraContext';
 import TransacaoService from '../../services/TransacaoService';
 import CategoriaService from '../../services/CategoriaService';
 import './Transacoes.css';
 
-const carteiraService = new CarteiraService();
 const transacaoService = new TransacaoService();
 const categoriaService = new CategoriaService();
 
 const Transacoes = () => {
     const { usuario, logout } = useAuth();
+    const { carteiraAtiva, carteiras, carregarCarteiras } = useCarteira();
     const navigate = useNavigate();
     const toast = useRef(null);
 
     const [carregando, setCarregando] = useState(true);
-    const [carteira, setCarteira] = useState(null);
     const [transacoes, setTransacoes] = useState([]);
     const [categorias, setCategorias] = useState([]);
 
@@ -49,31 +48,26 @@ const Transacoes = () => {
     }
 
     useEffect(() => {
-        carregarDadosIniciais();
+        if (carteiras.length === 0) {
+            carregarCarteiras();
+        }
+        carregarCategorias();
     }, []);
 
     useEffect(() => {
-        if (carteira) carregarTransacoes();
-    }, [filtroTipo, carteira]);
+        if (carteiraAtiva) {
+            carregarTransacoes();
+        } else {
+            setCarregando(false);
+        }
+    }, [filtroTipo, carteiraAtiva]);
 
-    const carregarDadosIniciais = async () => {
+    const carregarCategorias = async () => {
         try {
-            const respostaCarteiras = await carteiraService.buscarTodos();
-            const carteiras = respostaCarteiras.data;
-
-            if (carteiras.length === 0) {
-                toast.current.show({ severity: 'warn', summary: 'Sem carteira', detail: 'Você não tem carteira cadastrada.' });
-                setCarregando(false);
-                return;
-            }
-
-            setCarteira(carteiras[0]);
-
-            const respostaCategorias = await categoriaService.buscarTodos();
-            setCategorias(respostaCategorias.data);
-
+            const resposta = await categoriaService.buscarTodos();
+            setCategorias(resposta.data);
         } catch (erro) {
-            toast.current.show({ severity: 'error', summary: 'Erro', detail: 'Erro ao carregar dados.' });
+            console.error('Erro ao carregar categorias:', erro);
         }
     };
 
@@ -83,7 +77,7 @@ const Transacoes = () => {
             const params = { page: 0, size: 50, sort: 'data,desc' };
             if (filtroTipo) params.tipo = filtroTipo;
 
-            const resposta = await transacaoService.buscarTransacoes(carteira.id, params);
+            const resposta = await transacaoService.buscarTransacoes(carteiraAtiva.id, params);
             setTransacoes(resposta.data.content);
         } catch (erro) {
             toast.current.show({ severity: 'error', summary: 'Erro', detail: 'Erro ao carregar transações.' });
@@ -132,10 +126,10 @@ const Transacoes = () => {
             };
 
             if (editando) {
-                await transacaoService.atualizarTransacao(carteira.id, transacao.id, dados);
+                await transacaoService.atualizarTransacao(carteiraAtiva.id, transacao.id, dados);
                 toast.current.show({ severity: 'success', summary: 'Atualizado', detail: 'Transação atualizada.' });
             } else {
-                await transacaoService.inserirTransacao(carteira.id, dados);
+                await transacaoService.inserirTransacao(carteiraAtiva.id, dados);
                 toast.current.show({ severity: 'success', summary: 'Criado', detail: 'Transação criada.' });
             }
 
@@ -162,7 +156,7 @@ const Transacoes = () => {
 
     const excluir = async (item) => {
         try {
-            await transacaoService.deletarTransacao(carteira.id, item.id);
+            await transacaoService.deletarTransacao(carteiraAtiva.id, item.id);
             toast.current.show({ severity: 'success', summary: 'Removido', detail: 'Transação removida.' });
             carregarTransacoes();
         } catch (erro) {
@@ -213,7 +207,15 @@ const Transacoes = () => {
                         <i className="pi pi-wallet"></i>
                         <span>Transações</span>
                     </button>
-                    <button className="prospera-nav-item">
+                    <button className="prospera-nav-item" onClick={() => navigate('/app/categorias')}>
+                        <i className="pi pi-tags"></i>
+                        <span>Categorias</span>
+                    </button>
+                    <button className="prospera-nav-item" onClick={() => navigate('/app/carteiras')}>
+                        <i className="pi pi-briefcase"></i>
+                        <span>Carteiras</span>
+                    </button>
+                    <button className="prospera-nav-item" onClick={() => navigate('/app/compartilhamento')}>
                         <i className="pi pi-users"></i>
                         <span>Compartilhamento</span>
                     </button>
@@ -236,7 +238,7 @@ const Transacoes = () => {
                     <div>
                         <h1 className="prospera-title">Transações</h1>
                         <p className="prospera-subtitle">
-                            {carteira ? `Carteira: ${carteira.nome}` : 'Gerencie suas movimentações'}
+                            {carteiraAtiva ? `Carteira: ${carteiraAtiva.nome}` : 'Nenhuma carteira ativa'}
                         </p>
                     </div>
                     <div className="prospera-user">
@@ -248,82 +250,95 @@ const Transacoes = () => {
                     </div>
                 </header>
 
-                <section className="prospera-panel">
-                    <div className="transacoes-toolbar">
-                        <Dropdown
-                            value={filtroTipo}
-                            options={opcoesTipo}
-                            onChange={(e) => setFiltroTipo(e.value)}
-                            placeholder="Filtrar por tipo"
-                            className="w-15rem"
-                        />
-                        <Button
-                            label="Nova Transação"
-                            icon="pi pi-plus"
-                            onClick={abrirNovaTransacao}
-                            className="prospera-btn-primary"
-                        />
+                {!carteiraAtiva ? (
+                    <div style={{ background: '#fef3c7', color: '#92400e', padding: 24, borderRadius: 10, textAlign: 'center' }}>
+                        <p style={{ margin: '0 0 12px', fontWeight: 600 }}>Nenhuma carteira ativa</p>
+                        <p style={{ margin: '0 0 16px' }}>Ative uma carteira para gerenciar transações.</p>
+                        <button 
+                            onClick={() => navigate('/app/carteiras')}
+                            style={{ background: '#16a34a', color: '#fff', border: 'none', padding: '10px 20px', borderRadius: 8, cursor: 'pointer', fontWeight: 600 }}
+                        >
+                            Ir para Carteiras
+                        </button>
                     </div>
-
-                    {carregando ? (
-                        <div className="prospera-loading-inline">
-                            <ProgressSpinner style={{ width: 40, height: 40 }} />
+                ) : (
+                    <section className="prospera-panel">
+                        <div className="transacoes-toolbar">
+                            <Dropdown
+                                value={filtroTipo}
+                                options={opcoesTipo}
+                                onChange={(e) => setFiltroTipo(e.value)}
+                                placeholder="Filtrar por tipo"
+                                className="w-15rem"
+                            />
+                            <Button
+                                label="Nova Transação"
+                                icon="pi pi-plus"
+                                onClick={abrirNovaTransacao}
+                                className="prospera-btn-primary"
+                            />
                         </div>
-                    ) : transacoes.length === 0 ? (
-                        <p style={{ textAlign: 'center', color: '#6b7280', padding: 32 }}>
-                            Nenhuma transação encontrada.
-                        </p>
-                    ) : (
-                        <table className="prospera-table">
-                            <thead>
-                                <tr>
-                                    <th>Descrição</th>
-                                    <th>Categoria</th>
-                                    <th>Data</th>
-                                    <th style={{ textAlign: 'right' }}>Valor</th>
-                                    <th style={{ textAlign: 'center' }}>Ações</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {transacoes.map((item) => {
-                                    const tipo = item.tipo.toLowerCase();
-                                    return (
-                                        <tr key={item.id}>
-                                            <td>
-                                                <div className="prospera-lancamento-desc">
-                                                    <span className={`prospera-badge ${tipo}`}>
-                                                        <i className={`pi ${tipo === 'receita' ? 'pi-arrow-up' : 'pi-arrow-down'}`}></i>
-                                                    </span>
-                                                    {item.descricao || '(sem descrição)'}
-                                                </div>
-                                            </td>
-                                            <td className="prospera-lancamento-data">{item.categoriaNome || '-'}</td>
-                                            <td className="prospera-lancamento-data">
-                                                {new Date(item.data).toLocaleDateString('pt-BR')}
-                                            </td>
-                                            <td className={`prospera-lancamento-valor ${tipo}`}>
-                                                {tipo === 'despesa' ? '- ' : '+ '}
-                                                R$ {Number(item.valor).toFixed(2)}
-                                            </td>
-                                            <td style={{ textAlign: 'center' }}>
-                                                <Button
-                                                    icon="pi pi-pencil"
-                                                    className="p-button-rounded p-button-text"
-                                                    onClick={() => abrirEditar(item)}
-                                                />
-                                                <Button
-                                                    icon="pi pi-trash"
-                                                    className="p-button-rounded p-button-text p-button-danger"
-                                                    onClick={() => confirmarExcluir(item)}
-                                                />
-                                            </td>
-                                        </tr>
-                                    );
-                                })}
-                            </tbody>
-                        </table>
-                    )}
-                </section>
+
+                        {carregando ? (
+                            <div className="prospera-loading-inline">
+                                <ProgressSpinner style={{ width: 40, height: 40 }} />
+                            </div>
+                        ) : transacoes.length === 0 ? (
+                            <p style={{ textAlign: 'center', color: '#6b7280', padding: 32 }}>
+                                Nenhuma transação encontrada.
+                            </p>
+                        ) : (
+                            <table className="prospera-table">
+                                <thead>
+                                    <tr>
+                                        <th>Descrição</th>
+                                        <th>Categoria</th>
+                                        <th>Data</th>
+                                        <th style={{ textAlign: 'right' }}>Valor</th>
+                                        <th style={{ textAlign: 'center' }}>Ações</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {transacoes.map((item) => {
+                                        const tipo = item.tipo.toLowerCase();
+                                        return (
+                                            <tr key={item.id}>
+                                                <td>
+                                                    <div className="prospera-lancamento-desc">
+                                                        <span className={`prospera-badge ${tipo}`}>
+                                                            <i className={`pi ${tipo === 'receita' ? 'pi-arrow-up' : 'pi-arrow-down'}`}></i>
+                                                        </span>
+                                                        {item.descricao || '(sem descrição)'}
+                                                    </div>
+                                                </td>
+                                                <td className="prospera-lancamento-data">{item.categoriaNome || '-'}</td>
+                                                <td className="prospera-lancamento-data">
+                                                    {new Date(item.data).toLocaleDateString('pt-BR')}
+                                                </td>
+                                                <td className={`prospera-lancamento-valor ${tipo}`}>
+                                                    {tipo === 'despesa' ? '- ' : '+ '}
+                                                    R$ {Number(item.valor).toFixed(2)}
+                                                </td>
+                                                <td style={{ textAlign: 'center' }}>
+                                                    <Button
+                                                        icon="pi pi-pencil"
+                                                        className="p-button-rounded p-button-text"
+                                                        onClick={() => abrirEditar(item)}
+                                                    />
+                                                    <Button
+                                                        icon="pi pi-trash"
+                                                        className="p-button-rounded p-button-text p-button-danger"
+                                                        onClick={() => confirmarExcluir(item)}
+                                                    />
+                                                </td>
+                                            </tr>
+                                        );
+                                    })}
+                                </tbody>
+                            </table>
+                        )}
+                    </section>
+                )}
             </main>
 
             <Dialog

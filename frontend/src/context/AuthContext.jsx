@@ -6,6 +6,7 @@ export function AuthProvider({ children }){
     const [usuario, setUsuario] = useState(() => JSON.parse(localStorage.getItem('usuario')|| 'null'));
 
     function login(dadosUsuario){
+        localStorage.removeItem('carteira-ativa');
         localStorage.setItem('usuario', JSON.stringify(dadosUsuario));
         setUsuario(dadosUsuario);
     }
@@ -13,6 +14,7 @@ export function AuthProvider({ children }){
     function logout(){
         localStorage.removeItem('usuario');
         localStorage.removeItem('app-token');
+        localStorage.removeItem('carteira-ativa');
         setUsuario(null);
     }
 

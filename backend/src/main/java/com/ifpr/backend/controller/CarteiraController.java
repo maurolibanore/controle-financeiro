@@ -39,7 +39,7 @@ public class CarteiraController {
         return ResponseEntity.ok(service.atualizar(id, dto));
     }
 
-    @DeleteMapping
+    @DeleteMapping("/{id}")
     public ResponseEntity<CarteiraResponseDTO> deletar(@PathVariable Long id){
         service.deletarPorId(id);
         return ResponseEntity.noContent().build();

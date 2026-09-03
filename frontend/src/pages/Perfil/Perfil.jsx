@@ -80,7 +80,11 @@ const Perfil = () => {
                         <i className="pi pi-wallet"></i>
                         <span>Transações</span>
                     </button>
-                    <button className="prospera-nav-item">
+                    <button className="prospera-nav-item" onClick={() => navigate('/app/carteiras')}>
+                        <i className="pi pi-briefcase"></i>
+                        <span>Carteiras</span>
+                    </button>
+                    <button className="prospera-nav-item" onClick={() => navigate('/app/compartilhamento')}>
                         <i className="pi pi-users"></i>
                         <span>Compartilhamento</span>
                     </button>

@@ -10,55 +10,79 @@ import RedefinirSenha from './pages/RedefinirSenha/RedefinirSenha';
 import AlteracaoSenha from './pages/AlteracaoSenha/AlteracaoSenha';
 import Transacoes from './pages/Transacoes/Transacoes';
 import Perfil from './pages/Perfil/Perfil';
+import { CarteiraProvider } from './context/CarteiraContext';
+import Carteiras from './pages/Carteiras/Carteiras';
+import Categorias from './pages/Categorias/Categorias';
+import Compartilhamento from './pages/Compartilhamento/Compartilhamento';
 
 function App() {
   return (
     <AuthProvider>
-      <BrowserRouter>
-        <Routes>
-          {/* Redireciona a página inicial direto para o cadastro para você testar */}
-          <Route path="/" element={<Navigate to="/cadastro" />} />
-          
-          {/* Rota da tela de cadastro */}
-          <Route path="/cadastro" element={<Cadastro />} />
-          
-          {/* Rota da tela de login (descomente quando criar) */}
-          <Route path="/login" element={<Login />} /> 
+      <CarteiraProvider>
+        <BrowserRouter>
+          <Routes>
+            {/* Redireciona a página inicial direto para o cadastro para você testar */}
+            <Route path="/" element={<Navigate to="/cadastro" />} />
+            
+            {/* Rota da tela de cadastro */}
+            <Route path="/cadastro" element={<Cadastro />} />
+            
+            {/* Rota da tela de login (descomente quando criar) */}
+            <Route path="/login" element={<Login />} /> 
 
-          {/* Rota da tela de dashboard*/}
-          <Route path="/app/dashboard" element={
-            <RotaProtegida>
-              <Dashboard />
-            </RotaProtegida>
-          } />
-
-          {/* Rota da tela de recSenha*/}
-          <Route path="/recuperar-senha" element={<RecuperacaoSenha />} /> 
-
-          {/* Rota da tela de redSenha*/}
-          <Route path="/redefinir-senha/:token" element={<RedefinirSenha />} />
-
-          {/* Rota da tela de alterarSenha*/}
-          <Route path="/app/perfil/senha" element={
-            <RotaProtegida>
-              <AlteracaoSenha />
-            </RotaProtegida>
-          } />
-
-          <Route path="/app/transacoes" element={
+            {/* Rota da tela de dashboard*/}
+            <Route path="/app/dashboard" element={
               <RotaProtegida>
-                  <Transacoes />
+                <Dashboard />
               </RotaProtegida>
-          } />
+            } />
 
-          <Route path="/app/perfil" element={
+            {/* Rota da tela de recSenha*/}
+            <Route path="/recuperar-senha" element={<RecuperacaoSenha />} /> 
+
+            {/* Rota da tela de redSenha*/}
+            <Route path="/redefinir-senha/:token" element={<RedefinirSenha />} />
+
+            {/* Rota da tela de alterarSenha*/}
+            <Route path="/app/perfil/senha" element={
               <RotaProtegida>
-                  <Perfil />
+                <AlteracaoSenha />
               </RotaProtegida>
-          } />
+            } />
 
-        </Routes>
-      </BrowserRouter>      
+            <Route path="/app/transacoes" element={
+                <RotaProtegida>
+                    <Transacoes />
+                </RotaProtegida>
+            } />
+
+            <Route path="/app/perfil" element={
+                <RotaProtegida>
+                    <Perfil />
+                </RotaProtegida>
+            } />
+
+            <Route path="/app/carteiras" element={
+                <RotaProtegida>
+                  <Carteiras/>
+                </RotaProtegida>
+            } />
+
+            <Route path="/app/categorias" element={
+                <RotaProtegida>
+                    <Categorias />
+                </RotaProtegida>
+            } />
+
+            <Route path="/app/compartilhamento" element={
+                <RotaProtegida>
+                    <Compartilhamento />
+                </RotaProtegida>
+            } />
+
+          </Routes>
+        </BrowserRouter>      
+      </CarteiraProvider>
     </AuthProvider>
 
   );

@@ -1,0 +1,116 @@
+.carteiras-toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.carteiras-info {
+    color: #6b7280;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0;
+}
+
+.carteiras-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px;
+}
+
+.carteira-card {
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 14px;
+    padding: 24px;
+    position: relative;
+    transition: all 0.2s;
+}
+
+.carteira-card:hover {
+    border-color: #16a34a;
+    box-shadow: 0 4px 12px rgba(22, 163, 74, 0.08);
+}
+
+.carteira-card.ativa {
+    border-color: #16a34a;
+    background: #f0fdf4;
+}
+
+.carteira-badge {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background: #16a34a;
+    color: #fff;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+}
+
+.carteira-icone {
+    width: 48px;
+    height: 48px;
+    background: #ecfdf5;
+    color: #16a34a;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    margin-bottom: 16px;
+}
+
+.carteira-card h3 {
+    margin: 0 0 8px;
+    font-size: 18px;
+    color: #111827;
+}
+
+.carteira-descricao {
+    color: #6b7280;
+    font-size: 13px;
+    margin: 0 0 12px;
+    min-height: 20px;
+}
+
+.carteira-dono {
+    color: #374151;
+    font-size: 13px;
+    margin: 0 0 12px;
+}
+
+.carteira-papel {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 600;
+    margin-bottom: 16px;
+}
+
+.carteira-papel.dono {
+    background: #dbeafe;
+    color: #1e40af;
+}
+
+.carteira-papel.editor {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.carteira-papel.visualizador {
+    background: #f3f4f6;
+    color: #4b5563;
+}
+
+.carteira-acoes {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    padding-top: 16px;
+    border-top: 1px solid #f3f4f6;
+}

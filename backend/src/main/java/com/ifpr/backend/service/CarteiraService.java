@@ -16,6 +16,7 @@ import com.ifpr.backend.model.Usuario;
 import com.ifpr.backend.model.enums.PapelCarteira;
 import com.ifpr.backend.repository.CarteiraMembroRepository;
 import com.ifpr.backend.repository.CarteiraRepository;
+import com.ifpr.backend.repository.TransacaoRepository;
 import com.ifpr.backend.security.AuthUsuarioProvider;
 
 @Service
@@ -26,6 +27,9 @@ public class CarteiraService {
 
     @Autowired
     private CarteiraMembroRepository membroRepository;
+
+    @Autowired
+    private TransacaoRepository transacaoRepository;
 
     @Autowired
     private AuthUsuarioProvider authUsuarioProvider;
@@ -59,11 +63,17 @@ public class CarteiraService {
         return converterParaDTO(atualizada, PapelCarteira.DONO);
     }
 
-    public void deletarPorId(Long id){
-        Usuario usuarioLogado = authUsuarioProvider.getUsuarioAutenticado();
-        Carteira carteira = buscarCarteiraSeDono(id, usuarioLogado);
-        repository.delete(carteira);
-    }
+    public void deletarPorId(Long id) {
+    Usuario usuarioLogado = authUsuarioProvider.getUsuarioAutenticado();
+    Carteira carteira = buscarCarteiraSeDono(id, usuarioLogado);
+    
+    // deleta todas as transacoes da carteira primeiro
+    transacaoRepository.deleteAll(transacaoRepository.findAll().stream()
+        .filter(t -> t.getCarteira().getId().equals(carteira.getId()))
+        .toList());
+    
+    repository.delete(carteira);
+}
 
     public List<CarteiraResponseDTO> buscarTodas() {
         Usuario usuarioLogado = authUsuarioProvider.getUsuarioAutenticado();
