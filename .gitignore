@@ -55,3 +55,6 @@ $RECYCLE.BIN/
 
 # Windows shortcuts
 *.lnk
+
+#secrets
+application-secrets.properties
