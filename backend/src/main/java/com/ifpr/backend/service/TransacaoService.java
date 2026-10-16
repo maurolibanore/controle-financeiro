@@ -47,6 +47,9 @@ public class TransacaoService {
     @Autowired
     private AuthUsuarioProvider authUsuarioProvider;
 
+    @Autowired 
+    private EventoCarteiraService eventoService;
+
     public TransacaoResponseDTO inserir(Long carteiraId, TransacaoRequestDTO dto) {
         Usuario usuarioLogado = authUsuarioProvider.getUsuarioAutenticado();
         Carteira carteira = buscarCarteiraSeEditor(carteiraId, usuarioLogado);
@@ -65,7 +68,10 @@ public class TransacaoService {
             transacao.setCategoria(categoria);
         }
 
-        return converterParaDTO(repository.save(transacao));
+        Transacao salva = repository.save(transacao);
+        TransacaoResponseDTO dto2 = converterParaDTO(salva);
+        eventoService.notificarCarteira(carteiraId, "nova-transacao", dto2);
+        return dto2;
     }
 
     public TransacaoResponseDTO atualizar(Long carteiraId, Long id, TransacaoRequestDTO dto) {
@@ -92,7 +98,10 @@ public class TransacaoService {
             transacao.setCategoria(null);
         }
 
-        return converterParaDTO(repository.save(transacao));
+        Transacao atualizada = repository.save(transacao);
+        TransacaoResponseDTO dto2 = converterParaDTO(atualizada);
+        eventoService.notificarCarteira(carteiraId, "transacao-atualizada", dto2);
+        return dto2;
     }
 
     public void deletarPorId(Long carteiraId, Long id) {
@@ -107,6 +116,8 @@ public class TransacaoService {
         }
 
         repository.delete(transacao);
+
+        eventoService.notificarCarteira(carteiraId, "transacao-deletada", id);
     }
 
     public Page<TransacaoResponseDTO> buscarTodas(

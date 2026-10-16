@@ -36,6 +36,11 @@ public class JwtFiltroAutenticacao extends OncePerRequestFilter {
 
         if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
             token = authorizationHeader.substring(7);
+        } else if (request.getRequestURI().startsWith("/eventos/") && request.getParameter("token") != null) {
+            token = request.getParameter("token");
+        }
+
+        if (token != null) {
             username = jwtService.extractUsername(token);
         }
 
