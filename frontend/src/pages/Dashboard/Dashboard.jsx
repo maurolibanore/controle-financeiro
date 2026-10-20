@@ -1,13 +1,16 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ProgressSpinner } from 'primereact/progressspinner';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 import { useAuth } from '../../context/AuthContext';
 import { useCarteira } from '../../context/CarteiraContext';
 import TransacaoService from '../../services/TransacaoService';
+import EventoService from '../../services/EventoService';
 import './Dashboard.css';
 
 const transacaoService = new TransacaoService();
+
+const eventoService = new EventoService();
 
 const Dashboard = () => {
     const { usuario, logout } = useAuth();
@@ -30,6 +33,32 @@ const Dashboard = () => {
         } else if (carteiras.length === 0) {
             setCarregando(false);
         }
+    }, [carteiraAtiva]);
+
+    useEffect(() => {
+        if (!carteiraAtiva) return;
+
+        eventoService.conectar(carteiraAtiva.id, {
+            onConectado: (msg) => {
+                console.log('SSE conectado:', msg);
+            },
+            onNovaTransacao: (transacao) => {
+                console.log('Nova transação recebida:', transacao);
+                carregarDados();
+            },
+            onTransacaoAtualizada: (transacao) => {
+                console.log('Transação atualizada:', transacao);
+                carregarDados();
+            },
+            onTransacaoDeletada: (id) => {
+                console.log('Transação deletada:', id);
+                carregarDados();
+            }
+        });
+        
+        return () => {
+            eventoService.desconectar();
+        };
     }, [carteiraAtiva]);
 
     const carregarDados = async () => {
