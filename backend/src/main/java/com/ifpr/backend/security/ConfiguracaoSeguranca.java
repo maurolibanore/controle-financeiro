@@ -21,8 +21,11 @@ public class ConfiguracaoSeguranca {
 
     private final JwtFiltroAutenticacao jwtFiltroAutenticacao;
 
-    public ConfiguracaoSeguranca(JwtFiltroAutenticacao jwtFiltroAutenticacao) {
+    private final RateLimitFiltro rateLimitFiltro;
+    
+    public ConfiguracaoSeguranca(JwtFiltroAutenticacao jwtFiltroAutenticacao, RateLimitFiltro rateLimitFiltro) {
         this.jwtFiltroAutenticacao = jwtFiltroAutenticacao;
+        this.rateLimitFiltro = rateLimitFiltro;
     }
 
     @Bean
@@ -48,6 +51,7 @@ public class ConfiguracaoSeguranca {
             .sessionManagement(session -> session
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             )
+            .addFilterBefore(rateLimitFiltro, UsernamePasswordAuthenticationFilter.class)
             .addFilterBefore(jwtFiltroAutenticacao, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
