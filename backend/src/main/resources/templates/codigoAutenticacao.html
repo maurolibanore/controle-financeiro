@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+    <html xmlns:th="http://www.thymeleaf.org">
+        <head>
+            <meta charset="UTF-8">
+            <title>Código de verificação - Prospera</title>
+        </head>
+        <body style="margin:0; padding:0; font-family: Arial, sans-serif; background-color:#f4f6f8;">
+
+            <table width="100%" cellpadding="0" cellspacing="0" style="background-color:#f4f6f8; padding:40px 20px;">
+                <tr>
+                    <td align="center">
+                        <table width="520" cellpadding="0" cellspacing="0" style="background-color:#ffffff; border-radius:12px; overflow:hidden; box-shadow:0 2px 10px rgba(0,0,0,0.05);">
+
+                            <tr>
+                                <td style="background-color:#16a34a; padding:32px; text-align:center;">
+                                    <h1 style="margin:0; color:#ffffff; font-size:28px;">Prospera</h1>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td style="padding:40px 32px;">
+                                    <h2 style="margin:0 0 16px; color:#111827; font-size:22px;">
+                                        Olá, <span th:text="${nome}">usuário</span>!
+                                    </h2>
+                                    <p style="margin:0 0 24px; color:#4b5563; font-size:15px; line-height:1.6;">
+                                        Recebemos uma tentativa de login na sua conta. Para continuar, use o código de verificação abaixo:
+                                    </p>
+
+                                    <div style="background-color:#f0fdf4; border:2px dashed #16a34a; border-radius:10px; padding:24px; text-align:center; margin-bottom:24px;">
+                                        <p style="margin:0 0 8px; color:#166534; font-size:13px; font-weight:600; letter-spacing:1px;">
+                                            SEU CÓDIGO
+                                        </p>
+                                        <p style="margin:0; color:#16a34a; font-size:36px; font-weight:bold; letter-spacing:8px;" th:text="${codigo}">
+                                            000000
+                                        </p>
+                                    </div>
+
+                                    <p style="margin:0 0 16px; color:#4b5563; font-size:14px; line-height:1.6;">
+                                        Este código expira em <strong>5 minutos</strong>.
+                                    </p>
+                                    <p style="margin:0; color:#6b7280; font-size:13px; line-height:1.6;">
+                                        Se você não tentou fazer login, ignore este email. Sua conta continua segura.
+                                    </p>
+                                </td>
+                            </tr>
+                            
+                        </table>
+                    </td>
+                </tr>
+            </table>
+
+        </body>
+    </html>
