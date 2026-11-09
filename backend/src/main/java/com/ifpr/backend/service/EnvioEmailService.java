@@ -45,4 +45,25 @@ public class EnvioEmailService {
         javaMailSender.send(message);
     }
 
+    public void enviarCodigoAutenticacao(String destinatario, String nome, String codigo) {
+        try {
+            MimeMessage mensagem = javaMailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(mensagem, true, "UTF-8");
+
+            Context context = new Context();
+            context.setVariable("nome", nome);
+            context.setVariable("codigo", codigo);
+
+            String html = templateEngine.process("codigoAutenticacao", context);
+
+            helper.setTo(destinatario);
+            helper.setSubject("Seu código de verificação - Prospera");
+            helper.setText(html, true);
+
+            javaMailSender.send(mensagem);
+        } catch (MessagingException e) {
+            throw new RuntimeException("Erro ao enviar email de código 2FA", e);
+        }
+    }
+
 }
