@@ -12,8 +12,13 @@ import org.thymeleaf.context.Context;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 @Service
 public class EnvioEmailService {
+
+    private static final Logger log = LoggerFactory.getLogger(EnvioEmailService.class);    
     
     @Autowired
     private JavaMailSender javaMailSender;
@@ -31,18 +36,23 @@ public class EnvioEmailService {
 
     @Async
     public void enviaEmailTemplate(String destinatario, String assunto, String template, Context contexto){
-        String templateString = templateEngine.process(template, contexto);
-        MimeMessage message = javaMailSender.createMimeMessage();
-        MimeMessageHelper helper;
-        try{
-            helper = new MimeMessageHelper(message, true);
+        log.info("Iniciando envio de email para: {}", destinatario);
+        try {
+            String templateString = templateEngine.process(template, contexto);
+            log.info("Template '{}' processado com sucesso", template);
+            
+            MimeMessage message = javaMailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, true);
             helper.setTo(destinatario);
             helper.setSubject(assunto);
-            helper.setText(templateString,true);
-        } catch(MessagingException e){
-            e.printStackTrace();
+            helper.setText(templateString, true);
+            
+            log.info("Mensagem construída, chamando send()...");
+            javaMailSender.send(message);
+            log.info("Email enviado com sucesso para: {}", destinatario);
+        } catch (Exception e) {
+            log.error("ERRO ao enviar email para {}: {}", destinatario, e.getMessage(), e);
         }
-        javaMailSender.send(message);
     }
 
     public void enviarCodigoAutenticacao(String destinatario, String nome, String codigo) {
