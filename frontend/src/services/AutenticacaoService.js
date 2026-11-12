@@ -19,6 +19,11 @@ class AutenticacaoService extends BaseService {
         const resposta = await this.api.post(`${this.endPoint}/redefinir-senha`, dados);
         return resposta;
     }
+
+    async verificarCodigo(dados) {
+        const resposta = await this.api.post(`${this.endPoint}/verificar-codigo`, dados);
+        return resposta;
+    }
 }
 
 export default AutenticacaoService;
