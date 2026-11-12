@@ -14,6 +14,7 @@ import { CarteiraProvider } from './context/CarteiraContext';
 import Carteiras from './pages/Carteiras/Carteiras';
 import Categorias from './pages/Categorias/Categorias';
 import Compartilhamento from './pages/Compartilhamento/Compartilhamento';
+import VerificarCodigo from './pages/VerificarCodigo/VerificarCodigo';
 
 function App() {
   return (
@@ -79,6 +80,8 @@ function App() {
                     <Compartilhamento />
                 </RotaProtegida>
             } />
+
+            <Route path="/verificar-codigo" element={<VerificarCodigo />} />
 
           </Routes>
         </BrowserRouter>      

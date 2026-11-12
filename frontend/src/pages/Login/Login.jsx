@@ -25,24 +25,14 @@ const Login = () => {
         setCarregando(true);
 
         try {
-            // faz login e recebe o token
-            const respostaLogin = await autenticacaoService.login({ email, senha });
-            const token = respostaLogin.data.token;
+            // valida credenciais e dispara cod 2FA por email
+            await autenticacaoService.login({ email, senha });
 
-            // salva o token no localStorage para o axios usar automaticamente
-            localStorage.setItem('usuario', JSON.stringify({ token }));
-
-            // busca os dados do usuario logado
-            const respostaPerfil = await usuarioService.buscarMeuPerfil();
-            const dadosUsuario = { ...respostaPerfil.data, token };
-
-            // att o AuthContext com os dados 
-            login(dadosUsuario);
-            navigate('/app/dashboard');
+            // redireciona para a tela de verf passando o email via state
+            navigate('/verificar-codigo', { state: { email, senha } });
         } catch (erroLogin) {
             const mensagem = erroLogin?.response?.data?.mensagem || 'E-mail ou senha inválidos.';
             setErro(mensagem);
-            localStorage.removeItem('usuario');
         } finally {
             setCarregando(false);
         }

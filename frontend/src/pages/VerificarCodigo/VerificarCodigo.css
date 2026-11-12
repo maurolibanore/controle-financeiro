@@ -1,0 +1,123 @@
+.verificar-codigo-container {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #16a34a 0%, #15803d 100%);
+    padding: 20px;
+}
+
+.verificar-codigo-card {
+    background: white;
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+    max-width: 440px;
+    width: 100%;
+    text-align: center;
+}
+
+.verificar-codigo-card h1 {
+    color: #16a34a;
+    margin-bottom: 8px;
+    font-size: 1.5rem;
+}
+
+.subtitulo {
+    color: #666;
+    margin-bottom: 4px;
+    font-size: 0.95rem;
+}
+
+.email-destaque {
+    color: #16a34a;
+    font-weight: 600;
+    margin-bottom: 24px;
+    word-break: break-all;
+}
+
+.verificar-codigo-card form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.verificar-codigo-card label {
+    text-align: left;
+    color: #333;
+    font-weight: 500;
+}
+
+.input-codigo {
+    padding: 16px;
+    font-size: 1.8rem;
+    text-align: center;
+    letter-spacing: 12px;
+    font-weight: 600;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.input-codigo:focus {
+    border-color: #16a34a;
+}
+
+.verificar-codigo-card button[type="submit"] {
+    background: #16a34a;
+    color: white;
+    border: none;
+    padding: 14px;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.verificar-codigo-card button[type="submit"]:hover:not(:disabled) {
+    background: #15803d;
+}
+
+.verificar-codigo-card button[type="submit"]:disabled {
+    background: #a7f3d0;
+    cursor: not-allowed;
+}
+
+.mensagem-erro {
+    background: #fee2e2;
+    color: #991b1b;
+    padding: 12px;
+    border-radius: 8px;
+    margin-bottom: 16px;
+    font-size: 0.9rem;
+}
+
+.mensagem-sucesso {
+    background: #dcfce7;
+    color: #166534;
+    padding: 12px;
+    border-radius: 8px;
+    margin-bottom: 16px;
+    font-size: 0.9rem;
+}
+
+.acoes-extras {
+    margin-top: 16px;
+}
+
+.link-reenviar {
+    background: none;
+    border: none;
+    color: #16a34a;
+    cursor: pointer;
+    font-size: 0.9rem;
+    text-decoration: underline;
+}
+
+.link-reenviar:disabled {
+    color: #999;
+    cursor: not-allowed;
+}
