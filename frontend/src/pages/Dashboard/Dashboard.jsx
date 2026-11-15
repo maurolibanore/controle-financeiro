@@ -4,6 +4,8 @@ import { ProgressSpinner } from 'primereact/progressspinner';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 import { useAuth } from '../../context/AuthContext';
 import { useCarteira } from '../../context/CarteiraContext';
+import { Button } from 'primereact/button';
+import ModalInsights from '../../components/ModalInsights';
 import TransacaoService from '../../services/TransacaoService';
 import EventoService from '../../services/EventoService';
 import './Dashboard.css';
@@ -20,6 +22,7 @@ const Dashboard = () => {
     const [erro, setErro] = useState('');
     const [resumo, setResumo] = useState(null);
     const [transacoes, setTransacoes] = useState([]);
+    const [modalInsights, setModalInsights] = useState(false);
 
     useEffect(() => {
         if (carteiras.length === 0) {
@@ -161,13 +164,23 @@ const Dashboard = () => {
                             {carteiraAtiva ? `Carteira: ${carteiraAtiva.nome}` : 'Nenhuma carteira ativa'}
                         </p>
                     </div>
-                    <div className="prospera-user">
-                        <div className="prospera-avatar">
-                            {usuario?.nome?.charAt(0).toUpperCase()}
-                        </div>
-                        <div>
-                            <p className="prospera-user-name">{usuario?.nome}</p>
-                            <p className="prospera-user-email">{usuario?.email}</p>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+                        {carteiraAtiva && (
+                            <Button
+                                label="Analisar meu mês"
+                                icon="pi pi-sparkles"
+                                onClick={() => setModalInsights(true)}
+                                style={{ background: 'linear-gradient(135deg, #8b5cf6, #ec4899)', border: 'none', color: '#fff', fontWeight: 600 }}
+                            />
+                        )}
+                        <div className="prospera-user">
+                            <div className="prospera-avatar">
+                                {usuario?.nome?.charAt(0).toUpperCase()}
+                            </div>
+                            <div>
+                                <p className="prospera-user-name">{usuario?.nome}</p>
+                                <p className="prospera-user-email">{usuario?.email}</p>
+                            </div>
                         </div>
                     </div>
                 </header>
@@ -299,6 +312,14 @@ const Dashboard = () => {
                             )}
                         </section>
                     </>
+                )}
+
+                {carteiraAtiva && (
+                    <ModalInsights
+                        visivel={modalInsights}
+                        aoFechar={() => setModalInsights(false)}
+                        carteiraId={carteiraAtiva.id}
+                    />
                 )}
 
             </main>
