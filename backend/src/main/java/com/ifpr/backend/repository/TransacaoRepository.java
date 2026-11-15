@@ -56,4 +56,14 @@ public interface TransacaoRepository extends JpaRepository<Transacao, Long> {
               @Param("carteiraId") Long carteiraId,
               @Param("dataInicio") LocalDate dataInicio,
               @Param("dataFim") LocalDate dataFim);
+
+              
+    @Query("SELECT t FROM Transacao t WHERE t.carteira = :carteira " +
+           "AND t.data >= :dataInicio " +
+           "AND t.data <= :dataFim " +
+           "ORDER BY t.data DESC")
+    List<Transacao> buscarPorCarteiraEPeriodo(
+            @Param("carteira") Carteira carteira,
+            @Param("dataInicio") LocalDate dataInicio,
+            @Param("dataFim") LocalDate dataFim);
 }
