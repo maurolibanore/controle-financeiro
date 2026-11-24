@@ -17,6 +17,8 @@ import com.ifpr.backend.model.Usuario;
 import com.ifpr.backend.repository.TokenRedefinicaoSenhaRepository;
 import com.ifpr.backend.repository.UsuarioRepository;
 
+import org.springframework.beans.factory.annotation.Value;
+
 
 @Service
 public class RecuperacaoSenhaService {
@@ -32,6 +34,9 @@ public class RecuperacaoSenhaService {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Value("${app.frontend.url}")
+    private String frontendUrl;
 
     public void solicitarRecuperacao(EsqueciSenhaDTO dto){
         Optional<Usuario> usuarioOpt = usuarioRepository.findByEmail(dto.getEmail());
@@ -55,7 +60,7 @@ public class RecuperacaoSenhaService {
 
         Context context = new Context();
         context.setVariable("nome", usuario.getNome());
-        context.setVariable("link", "http://localhost:5173/redefinir-senha/" + token);
+        context.setVariable("link", frontendUrl + "/redefinir-senha/" + token);
 
         emailService.enviaEmailTemplate(usuario.getEmail(), "Recuperação de Senha", "recuperacaoSenha", context);
 
