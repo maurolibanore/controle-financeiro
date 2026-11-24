@@ -1,11 +1,67 @@
-<html lang="pt-BR">
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
     <head>
         <meta charset="UTF-8">
-        <title>Cadastro Sucesso!</title>
+        <title>Bem-vindo à Prospera!</title>
     </head>
-    <body>
-        <h1>Cadastro Realizado com Sucesso!</h1>
-        <p>Olá <span th:text="${nome}"></span></p>
-        <p>Seu Cadastro foi realizado com sucesso</p>
+    <body style="margin:0; padding:0; font-family: Arial, sans-serif; background-color:#f4f6f8;">
+
+        <table width="100%" cellpadding="0" cellspacing="0" style="background-color:#f4f6f8; padding:40px 20px;">
+            <tr>
+                <td align="center">
+                    <table width="520" cellpadding="0" cellspacing="0" style="background-color:#ffffff; border-radius:12px; overflow:hidden; box-shadow:0 2px 10px rgba(0,0,0,0.05);">
+
+                        <tr>
+                            <td style="background-color:#16a34a; padding:32px; text-align:center;">
+                                <h1 style="margin:0; color:#ffffff; font-size:28px;">Prospera</h1>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td style="padding:40px 32px;">
+                                <h2 style="margin:0 0 16px; color:#111827; font-size:22px;">
+                                    Bem-vindo, <span th:text="${nome}">usuário</span>! 🎉
+                                </h2>
+                                <p style="margin:0 0 24px; color:#4b5563; font-size:15px; line-height:1.6;">
+                                    Seu cadastro foi realizado com sucesso! A partir de agora você tem o controle total das suas finanças na palma da mão.
+                                </p>
+
+                                <div style="background-color:#f0fdf4; border-left:4px solid #16a34a; border-radius:8px; padding:20px; margin-bottom:24px;">
+                                    <p style="margin:0 0 12px; color:#166534; font-size:15px; font-weight:600;">
+                                        O que você pode fazer agora:
+                                    </p>
+                                    <p style="margin:0 0 8px; color:#166534; font-size:14px; line-height:1.8;">
+                                        ✓ Cadastrar receitas e despesas
+                                    </p>
+                                    <p style="margin:0 0 8px; color:#166534; font-size:14px; line-height:1.8;">
+                                        ✓ Organizar tudo por categorias
+                                    </p>
+                                    <p style="margin:0 0 8px; color:#166534; font-size:14px; line-height:1.8;">
+                                        ✓ Compartilhar sua carteira com a família
+                                    </p>
+                                    <p style="margin:0; color:#166534; font-size:14px; line-height:1.8;">
+                                        ✓ Analisar seus gastos com inteligência artificial
+                                    </p>
+                                </div>
+
+                                <p style="margin:0; color:#6b7280; font-size:13px; line-height:1.6;">
+                                    Qualquer dúvida, é só responder este email. Seja bem-vindo à nossa comunidade!
+                                </p>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td style="background-color:#f9fafb; padding:20px 32px; text-align:center; border-top:1px solid #e5e7eb;">
+                                <p style="margin:0; color:#9ca3af; font-size:12px;">
+                                    Prospera — Controle financeiro simples e poderoso
+                                </p>
+                            </td>
+                        </tr>
+
+                    </table>
+                </td>
+            </tr>
+        </table>
+
     </body>
 </html>
