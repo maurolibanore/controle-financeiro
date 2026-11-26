@@ -13,10 +13,12 @@ import { useAuth } from '../../context/AuthContext';
 import { useCarteira } from '../../context/CarteiraContext';
 import TransacaoService from '../../services/TransacaoService';
 import CategoriaService from '../../services/CategoriaService';
+import RelatorioService from '../../services/RelatorioService';
 import './Transacoes.css';
 
 const transacaoService = new TransacaoService();
 const categoriaService = new CategoriaService();
+const relatorioService = new RelatorioService();
 
 const Transacoes = () => {
     const { usuario, logout } = useAuth();
@@ -35,6 +37,8 @@ const Transacoes = () => {
     const [editando, setEditando] = useState(false);
     const [transacao, setTransacao] = useState(estadoInicial());
     const [salvando, setSalvando] = useState(false);
+
+    const [baixandoPdf, setBaixandoPdf] = useState(false);
 
     function estadoInicial() {
         return {
@@ -187,6 +191,35 @@ const Transacoes = () => {
         </div>
     );
 
+    const exportarPdf = async () => {
+        if (!carteiraAtiva) return;
+
+        setBaixandoPdf(true);
+        try {
+            const params = {};
+            if (filtroTipo) params.tipo = filtroTipo;
+
+            const resposta = await relatorioService.baixarPdfTransacoes(carteiraAtiva.id, params);
+
+            // link para download
+            const blob = new Blob([resposta.data], { type: 'application/pdf' });
+            const url = window.URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            const dataHoje = new Date().toISOString().split('T')[0];
+            link.download = `relatorio-prospera-${dataHoje}.pdf`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            window.URL.revokeObjectURL(url);
+        } catch (erro) {
+            console.error('Erro ao gerar PDF:', erro);
+            alert('Erro ao gerar relatório. Tente novamente.');
+        } finally {
+            setBaixandoPdf(false);
+        }
+    };
+
     return (
         <div className="prospera-layout">
             <Toast ref={toast} />
@@ -270,6 +303,14 @@ const Transacoes = () => {
                                 onChange={(e) => setFiltroTipo(e.value)}
                                 placeholder="Filtrar por tipo"
                                 className="w-15rem"
+                            />
+                            <Button
+                                label={baixandoPdf ? 'Gerando...' : 'Exportar PDF'}
+                                icon="pi pi-file-pdf"
+                                onClick={exportarPdf}
+                                disabled={baixandoPdf}
+                                severity="secondary"
+                                outlined
                             />
                             <Button
                                 label="Nova Transação"
